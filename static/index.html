@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="description" content="A fictional gazette generator for your creative projects."/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://unpkg.com/normalize.css">
+        <link rel="stylesheet" href="https://unpkg.com/magick.css">
+        <link rel="stylesheet" href="./style.css">
+        
+        <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
+
+        <script src="script.js"></script>
+        <title>Muckraker</title>
+    </head>
+
+    <body onload="trackBodyLenght();">
+        <header>
+            <h1>Muckraker</h1>
+            <p>A fictional gazette generator for your creative projects.</p>
+            <nav>
+                <ul>
+                    <li><a href="https://github.com/kompoth/muckraker">Github</a></li>
+                    <li><a href="https://github.com/kompoth">Author</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main> 
+            <section id="editor">
+                <h2>Issue creation</h2>
+                <p>Configure your gazette, compose articles and push <em>Send to print</em> to generate a PDF.</p> 
+                <p>See a sample issue screenshot <a href="https://raw.githubusercontent.com/kompoth/muckraker/main/media/issue.png">here</a>.</p> 
+                <form onreset="trackBodyLenght()">
+                    <label for="heading-input">Heading:</label>
+                    <input type="text" maxlength="50" id="heading-input" name="heading"/>
+                    <label for="subheading-input">Subheading:</label>
+                    <input type="text" maxlength="50" id="subheading-input" name="subheading"/>
+                    <label for="issue-no-input">Issue number:</label>
+                    <input type="text" maxlength="50" id="issue-no-input" name="issue-no"/>
+                    <label for="issue-date-input">Issue date:</label>
+                    <input type="text" maxlength="50" id="issue-date-input" name="issue-date"/>
+                    <label for="issue-cost-input">Cost:</label>
+                    <input type="text" maxlength="50" id="issue-cost-input" name="issue-cost"/>
+                    
+                    <label for="issue-body-textarea">Issue body (<span id="body-length-tracker">0</span>):</label>
+                    <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
+                    
+                    <!--fieldset>
+                        <legend>Attached files</legend>
+                        <ul id="attached-images-list">
+                        </ul>
+                    </fieldset>
+                    <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();" disabled/--> 
+
+                    <button id="print-button" type="button" onclick="requestPDF();">Send to print</button>
+                </form>
+            </section>
+            
+            <section id="cheatsheet">
+                <h2>Syntax cheatsheet</h2>
+                <p>Use the following text formating conventions to make you articles fansy:</p>
+                <pre><code>Article title
+=============
+
+Article subtitle
+----------------
+
+Italics with *asterisks* or _underscores_.
+
+Bold with **asterisks** or __underscores__.<!--![Image caption](image-file-name.png)-->
+
+| A | simple          | table                    |
+| - | --------------- | ------------------------ |
+| 1 | *italics* text  | short text               |
+| 2 | **bold** text   | a little bit longer text |</code></pre>
+            </section>
+
+            <footer>
+                <hr>
+                <small>
+                    <p>Made by <a href="https://github.com/kompoth">Vasily Negrebetskiy</a></p>
+                    <p>This page is powered by <a href="https://css.winterveil.net/">magic.css</a><p>
+                </small>
+            </footer>
+             
+        </main>
+    </body>
+</html>

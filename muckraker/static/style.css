@@ -1,0 +1,124 @@
+@media print { 
+    @page {
+        size: A4 portrait;
+        margin: 8mm;
+        padding: 2mm;
+        border-top: 0.2mm solid black;
+        
+        @top-center {
+            content: string(title);
+            margin: 1mm;
+        }
+    }
+ 
+    /* Footer and header */
+    @page :left {
+        @top-left {
+            content: counter(page);
+            margin: 1mm;
+        }
+    }
+    @page :right {
+        @top-right {
+            content: counter(page);
+            margin: 1mm;
+        }
+    }
+    @page :first {
+        border-top: None;
+        @top-left {
+            content: None;
+          }
+        @top-center {
+            content: None;
+          }
+        @top-right {
+            content: None;
+          }
+    }
+}
+
+html {
+    font-size: 10pt;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 2mm;
+    page-break-after: avoid;
+}
+
+#heading h1 {
+    string-set: title content();
+    font-size: 38pt;
+}
+
+#heading .issue-info {
+    column-count: 3;
+    font-weight: bold;
+    padding: 0;
+    border-top: 0.2mm solid black;
+    border-bottom: 0.2mm solid black;
+    margin-bottom: 2mm;
+}
+
+#heading .issue-info .issue-no {
+    text-align: left;
+    margin: 1mm;
+}
+
+#heading .issue-info .issue-date {
+    text-align: center;
+    margin: 1mm;
+}
+
+#heading .issue-info .issue-cost {
+    text-align: right;
+    margin: 1mm;
+}
+
+.columns {
+    column-count: 2;
+    column-rule: 0.2mm solid black;
+}
+
+.columns h1 {
+    font-size: 16pt;
+}
+
+.columns h2 {
+    font-size: 12pt;
+}
+
+.columns img {
+    width: 80%;
+    margin: 0 auto;
+    display: block;
+}
+
+.columns p {
+    margin: 2mm;
+    text-indent: 2mm;
+}
+
+.columns table {
+    margin: 0 auto;
+    border-spacing: 0;
+}
+
+.columns table th {
+    border-bottom: 0.2mm solid black;
+}
+
+.columns table td, th {
+    padding-left: 2mm;
+    padding-right: 2mm;
+}
+
+.columns table td:first-child, th:first-child {
+    padding-left: 0;
+}
+
+.columns table td:last-child, th:last-child {
+    padding-right: 0;
+}

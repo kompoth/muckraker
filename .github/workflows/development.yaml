@@ -1,0 +1,36 @@
+name: Development
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Check with linters
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3  
+    - name: Set up Python 
+      uses: actions/setup-python@v4
+      with:  
+        python-version: "3.11" 
+    - name: Check with linter 
+      run: pip install flake8 && flake8
+
+  test:
+    name: Run tests 
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3  
+    - name: Set up Python 
+      uses: actions/setup-python@v4
+      with:  
+        python-version: "3.11" 
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    - name: Run tests 
+      run: pytest

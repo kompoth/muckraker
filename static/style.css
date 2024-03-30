@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700');
+
+/* Use default color with transparency for placeholders */
+:root {
+    --form-fg: var(--fg);
+    --form-fg-placeholder: var(--fg);
+
+}
+input::placeholder,
+textarea::placeholder {
+    opacity: 0.5;
+}
+
+/* Hacking header */
+header {
+    margin: 2rem;
+}
+header nav ul li a {
+    text-decoration: underline;
+}
+header nav ul li a::before {
+    content: "";
+}
+header h1 {
+    padding: 0;
+}
+header p {
+    text-align: center;
+}
+
+/* Body text styling */
+#issue-body-textarea, code {
+    font-size: 1.6rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: normal;
+}
+#issue-body-textarea {
+    background-color: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--fg);
+}
+#issue-body-textarea:focus {
+    border: 2px solid var(--fg);
+}
+ 
+input[type=file]::file-selector-button {
+    background-color: transparent;
+    color: var(--fg);
+    padding: 4px;
+    margin-right: 1rem;
+    border: 1px solid var(--fg);
+    cursor: pointer;
+}
+
+input[type=file]:disabled::file-selector-button {
+    opacity: 0.5;
+    border-style: dashed; /* 1 */
+    cursor: not-allowed; /* 2 */
+    text-decoration: line-through;
+}
+form input[type=file] {
+    grid-column: span 2;
+}
