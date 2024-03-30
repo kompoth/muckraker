@@ -13,7 +13,7 @@ def issue():
     return {
         "config": {
             "size": "demitab",
-            "bg": False,
+            "bg": None,
             "heading": {
                 "title": "Muckraker",
                 "subtitle": "Test sample",

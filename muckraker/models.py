@@ -14,7 +14,7 @@ class IssueHeading(BaseModel):
 
 
 class IssueConfig(BaseModel):
-    bg: Optional[bool] = False
+    bg: Optional[Literal["bashcorpo_v5", "bashcorpo_v5_pale"]] = None
     size: Optional[Literal["a4", "a5", "demitab"]] = "a4"
     heading: IssueHeading
 

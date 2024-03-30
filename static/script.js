@@ -24,7 +24,7 @@ function updateImageList () {
 function requestPDF() {
     const requestBody = {
         config: {
-            bg: true,
+            bg: "bashcorpo_v5_pale",
             size: "demitab",
             heading: {
                 title: document.getElementById("heading-input").value,

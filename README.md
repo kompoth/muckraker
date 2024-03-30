@@ -13,3 +13,4 @@ Special mentions:
 - [Python-Markdown](https://github.com/Python-Markdown/markdown)
 - [Weasyprint](https://github.com/Kozea/WeasyPrint)
 - [magic.css](https://css.winterveil.net/)
+- [bashcorpo](https://www.deviantart.com/bashcorpo)

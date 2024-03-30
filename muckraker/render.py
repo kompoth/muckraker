@@ -33,6 +33,12 @@ def render_issue(
             heading.update({key: nh3.clean(value, tags=TAGS)})
     issue_config.update({"heading": heading})
 
+    # Select background
+    if issue_config.get("bg") is not None:
+        bg_path = STATIC / "bg" / (issue_config["bg"] + ".jpg")
+        bg_file_str = "file://" + str(bg_path.resolve())
+        issue_config.update({"bg": bg_file_str})
+
     # Render HTML
     issue_template = jinja_env.get_template("newspaper.html")
     html = issue_template.render(config=issue_config, body=body)
