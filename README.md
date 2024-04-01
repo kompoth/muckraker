@@ -1,7 +1,7 @@
 # Muckraker
 A vintage gazette generator for creative projects.
 
-![Issue sample](./media/issue.png)
+![Issue sample](./media/issue.jpg)
 
 Available as [a web tool](http://muckraker.kmiziz.xyz).
 
