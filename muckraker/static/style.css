@@ -20,7 +20,7 @@
 }
 @font-face {
   font-family: KJV1611;
-  src: url(fonts/KJV1611/KJV1611.ttf) format('truetype');
+  src: url(fonts/KJV1611/KJV1611.otf) format('opentype');
 }
 
 
