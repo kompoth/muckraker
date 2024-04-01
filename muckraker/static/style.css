@@ -1,3 +1,25 @@
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020Base-Regular.ttf) format('truetype');;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020Base-Italic.ttf) format('truetype');;
+  font-style: italic;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020StyleE-Regular.ttf) format('truetype');;
+  font-weight: bold;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020StyleE-Italic.ttf) format('truetype');;
+  font-weight: bold;
+  font-style: italic;
+}
+
+
 @media print { 
     @page {
         size: A4 portrait;
@@ -40,6 +62,7 @@
 
 html {
     font-size: 10pt;
+    font-family: TT2020;
 }
 
 h1, h2 {
