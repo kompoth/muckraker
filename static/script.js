@@ -21,7 +21,9 @@ function updateImageList () {
     });
 }
 
-function requestPDF() {
+async function requestPDF() {
+    document.getElementById("print-button").disabled = true;
+
     const requestBody = {
         config: {
             bg: "bashcorpo_v5_pale",
@@ -36,18 +38,24 @@ function requestPDF() {
         },
         body: document.getElementById("issue-body-textarea").value
     }
-    fetch("/api/issue", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "accept": "application/json"
-        },
-        body: JSON.stringify(requestBody)
-    }).then((resp) => {
+
+    try {
+        const resp = await fetch("/api/issue", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "accept": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        });
+
         if (resp.ok) {
-                resp.blob().then(blob => window.open(URL.createObjectURL(blob)));
-        } else {
-            resp.json().then(data => alert("Printing press says: " + data.detail[0].msg));
+            /* If everything is ok, open recieved PDF */
+            resp.blob().then(blob => window.open(URL.createObjectURL(blob)));
         }
-    });
+    } catch {
+        console.error("Failed to get PDF");
+    }
+
+    document.getElementById("print-button").disabled = false;
 }
