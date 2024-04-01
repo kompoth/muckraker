@@ -18,6 +18,10 @@
   font-weight: bold;
   font-style: italic;
 }
+@font-face {
+  font-family: KJV1611;
+  src: url(fonts/KJV1611/KJV1611.ttf) format('truetype');
+}
 
 
 @media print { 
@@ -72,6 +76,7 @@ header h1, h2 {
 
 header h1 {
     string-set: title content();
+    font-family: KJV1611;
     font-size: 38pt;
 }
 
