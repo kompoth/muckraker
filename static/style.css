@@ -40,14 +40,6 @@ header p {
     font-family: TT2020, monospace;
     font-weight: normal;
 }
-#issue-body-textarea {
-    background-color: var(--bg);
-    color: var(--fg);
-    border: 1px solid var(--fg);
-}
-#issue-body-textarea:focus {
-    border: 2px solid var(--fg);
-}
 
 /* File loading button */
 input[type=file]::file-selector-button {

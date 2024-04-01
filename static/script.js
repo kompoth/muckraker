@@ -23,14 +23,14 @@ function updateImageList () {
 
 async function requestPDF() {
     document.getElementById("print-button").disabled = true;
-
+ 
     const requestBody = {
         config: {
-            bg: "bashcorpo_v5_pale",
-            size: "demitab",
+            size: document.getElementById("size-select").value,
+            bg: document.getElementById("bg-select").value,
             heading: {
-                title: document.getElementById("heading-input").value,
-                subtitle: document.getElementById("subheading-input").value,
+                title: document.getElementById("title-input").value,
+                subtitle: document.getElementById("subtitle-input").value,
                 no: document.getElementById("issue-no-input").value,
                 date: document.getElementById("issue-date-input").value,
                 cost: document.getElementById("issue-cost-input").value

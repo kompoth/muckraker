@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 
 MAX_BODY_LEN = 6000
@@ -14,9 +14,16 @@ class IssueHeading(BaseModel):
 
 
 class IssueConfig(BaseModel):
-    bg: Optional[Literal["bashcorpo_v5", "bashcorpo_v5_pale"]] = None
+    bg: Optional[Literal["none", "bashcorpo_v5", "bashcorpo_v5_pale"]] = None
     size: Optional[Literal["a4", "a5", "demitab"]] = "a4"
     heading: IssueHeading
+
+    @field_validator("bg")
+    @classmethod
+    def set_to_none(cls, value):
+        if value == "none":
+            return None
+        return value
 
 
 class Issue(BaseModel):

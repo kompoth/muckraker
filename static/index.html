@@ -34,26 +34,48 @@
                 <p>Configure your gazette, compose articles and push <em>Send to print</em> to generate a PDF.</p> 
                 <p>See a sample issue screenshot <a href="https://raw.githubusercontent.com/kompoth/muckraker/main/media/issue.jpg">here</a>.</p> 
                 <form>
-                    <label for="heading-input">Heading:</label>
-                    <input type="text" maxlength="50" id="heading-input" name="heading"/>
-                    <label for="subheading-input">Subheading:</label>
-                    <input type="text" maxlength="50" id="subheading-input" name="subheading"/>
-                    <label for="issue-no-input">Issue number:</label>
-                    <input type="text" maxlength="50" id="issue-no-input" name="issue-no"/>
-                    <label for="issue-date-input">Issue date:</label>
-                    <input type="text" maxlength="50" id="issue-date-input" name="issue-date"/>
-                    <label for="issue-cost-input">Cost:</label>
-                    <input type="text" maxlength="50" id="issue-cost-input" name="issue-cost"/>
+                    <fieldset>
+                        <legend>Heading</legend>
+                        <label for="title-input">Title:</label>
+                        <input type="text" maxlength="50" id="title-input" name="title"/>
+                        <label for="subtitle-input">Subtitle:</label>
+                        <input type="text" maxlength="50" id="subtitle-input" name="subtitle"/>
+                        <label for="issue-no-input">Issue number:</label>
+                        <input type="text" maxlength="50" id="issue-no-input" name="issue-no"/>
+                        <label for="issue-date-input">Issue date:</label>
+                        <input type="text" maxlength="50" id="issue-date-input" name="issue-date"/>
+                        <label for="issue-cost-input">Cost:</label>
+                        <input type="text" maxlength="50" id="issue-cost-input" name="issue-cost"/>
+                    </fieldset>
                     
-                    <label for="issue-body-textarea">Issue body (<span id="body-length-tracker">0</span>):</label>
-                    <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
+                    <fieldset>
+                        <legend>Issue body (<span id="body-length-tracker">0</span>)</legend>
+                        <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
+                    </fieldset>
                     
                     <!--fieldset>
                         <legend>Attached files</legend>
-                        <ul id="attached-images-list">
-                        </ul>
+                        <ul id="attached-images-list"></ul>
+                        <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
+                    </fieldset-->
+
+                    <fieldset>
+                        <legend>Options</legend>
+                        <label for="size-select">Size:
+                            <select id="size-select" name="size">
+                                <option value="a4">A4 (210 x 297 mm)</option>
+                                <option value="a5">A5 (148 x 210 mm)</option>
+                                <option value="demitab">Demitab (200 x 270 mm)</option>
+                            </select>
+                        </label>
+                        <label for="bg-select">Paper texture:
+                            <select id="bg-select" name="bg">
+                                <option value="bashcorpo_v5">Grungy</option>
+                                <option value="bashcorpo_v5_pale">Grungy pale</option>
+                                <option value="none">None</option>
+                            </select>
+                        </label>
                     </fieldset>
-                    <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();" disabled/--> 
 
                     <button id="print-button" type="button" onclick="requestPDF();">Send to print</button>
                 </form>
