@@ -33,7 +33,7 @@
                 <h2>Issue creation</h2>
                 <p>Configure your gazette, compose articles and push <em>Send to print</em> to generate a PDF.</p> 
                 <p>See a sample issue screenshot <a href="https://raw.githubusercontent.com/kompoth/muckraker/main/media/issue.png">here</a>.</p> 
-                <form onreset="trackBodyLenght()">
+                <form>
                     <label for="heading-input">Heading:</label>
                     <input type="text" maxlength="50" id="heading-input" name="heading"/>
                     <label for="subheading-input">Subheading:</label>
@@ -55,7 +55,7 @@
                     </fieldset>
                     <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();" disabled/--> 
 
-                    <button id="print-button" type="button" onclick="requestPDF();">Send to print</button>
+                    <button id="print-button" type="button" onsubmit="requestPDF();">Send to print</button>
                 </form>
             </section>
             
@@ -76,6 +76,11 @@ Bold with **asterisks** or __underscores__.<!--![Image caption](image-file-name.
 | - | --------------- | ------------------------ |
 | 1 | *italics* text  | short text               |
 | 2 | **bold** text   | a little bit longer text |</code></pre>
+            </section>
+
+            <section id="bugreport">
+                <h2>Report a bug</h2>
+                <p>Please report any unexpected behaviour by creating an <a href="https://github.com/kompoth/muckraker/issues/new/choose">issue</a>. Thanks in advance!</p>
             </section>
 
             <footer>
