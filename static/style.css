@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: TT2020;
-  src: url(fonts/TT2020/dist/TT2020Base-Regular.ttf) format('truetype');;
+  src: url(fonts/TT2020/TT2020Base-Regular.ttf) format('truetype');;
 }
 
 /* Use default color with transparency for placeholders */
