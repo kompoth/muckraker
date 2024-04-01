@@ -44,11 +44,12 @@ def render_issue(
     html = issue_template.render(config=issue_config, body=body)
 
     # Render PDF
-    styles = [CSS(STATIC / "style.css"),]
+    font_config = FontConfiguration()
+    css = CSS(STATIC / "style.css", font_config=font_config)
     HTML(string=html).write_pdf(
         result_path,
-        stylesheets=styles,
-        font_config=FontConfiguration()
+        stylesheets=[css],
+        font_config=font_config
     )
 
 

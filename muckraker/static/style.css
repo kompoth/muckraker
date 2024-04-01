@@ -1,3 +1,29 @@
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020Base-Regular.ttf) format('truetype');;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020Base-Italic.ttf) format('truetype');;
+  font-style: italic;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020StyleE-Regular.ttf) format('truetype');;
+  font-weight: bold;
+}
+@font-face {
+  font-family: TT2020;
+  src: url(fonts/TT2020/dist/TT2020StyleE-Italic.ttf) format('truetype');;
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: KJV1611;
+  src: url(fonts/KJV1611/KJV1611.ttf) format('truetype');
+}
+
+
 @media print { 
     @page {
         size: A4 portrait;
@@ -40,39 +66,44 @@
 
 html {
     font-size: 10pt;
+    font-family: TT2020;
 }
 
-h1, h2 {
+header h1, h2 {
     text-align: center;
-    margin: 2mm;
-    page-break-after: avoid;
+    margin: 4mm;
 }
 
-#heading h1 {
+header h1 {
     string-set: title content();
+    font-family: KJV1611;
     font-size: 38pt;
 }
 
-#heading .issue-info {
+header h2 {
+    font-size: 14pt;
+}
+
+header .issue-info {
     column-count: 3;
     font-weight: bold;
     padding: 0;
     border-top: 0.2mm solid black;
     border-bottom: 0.2mm solid black;
-    margin-bottom: 2mm;
+    margin: 2mm 0;
 }
 
-#heading .issue-info .issue-no {
+header .issue-info .issue-no {
     text-align: left;
     margin: 1mm;
 }
 
-#heading .issue-info .issue-date {
+header .issue-info .issue-date {
     text-align: center;
     margin: 1mm;
 }
 
-#heading .issue-info .issue-cost {
+header .issue-info .issue-cost {
     text-align: right;
     margin: 1mm;
 }
@@ -82,12 +113,18 @@ h1, h2 {
     column-rule: 0.2mm solid black;
 }
 
+.columns h1, h2 {
+    text-align: center;
+    margin: 2mm;
+    page-break-after: avoid;
+}
+
 .columns h1 {
     font-size: 16pt;
 }
 
 .columns h2 {
-    font-size: 12pt;
+    font-size: 14pt;
 }
 
 .columns img {
@@ -99,6 +136,7 @@ h1, h2 {
 .columns p {
     margin: 2mm;
     text-indent: 2mm;
+    line-height: 100%;
 }
 
 .columns table {
