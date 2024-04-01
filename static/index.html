@@ -49,15 +49,16 @@
                     </fieldset>
                     
                     <fieldset>
-                        <legend>Issue body (<span id="body-length-tracker">0</span>)</legend>
+                        <legend>Issue body <span id="body-length-tracker">(0/6,000)</span></legend>
                         <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
                     </fieldset>
                     
-                    <!--fieldset>
-                        <legend>Attached files</legend>
+                    <fieldset>
+                        <legend>Images <span id="image-number-tracker">(0/4)</span></legend>
                         <ul id="attached-images-list"></ul>
+                        <button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Add image</button>
                         <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
-                    </fieldset-->
+                    </fieldset>
 
                     <fieldset>
                         <legend>Options</legend>
@@ -77,7 +78,7 @@
                         </label>
                     </fieldset>
 
-                    <button id="print-button" type="button" onclick="requestPDF();">Send to print</button>
+                    <button type="button" id="print-button" onclick="requestPDF();">Send to print</button>
                 </form>
             </section>
             

@@ -6,15 +6,19 @@ function trackBodyLenght () {
     const textarea = document.getElementById("issue-body-textarea");
     const curLength = textarea.value.length; 
     const maxLength = textarea.maxLength;
-    const countStr = formatThousands(curLength) + "/" + formatThousands(maxLength); 
+    const countStr = "(" + formatThousands(curLength) + "/" + formatThousands(maxLength) + ")"; 
     document.getElementById("body-length-tracker").innerHTML = countStr;
 }
 
-function updateImageList () {
+function updateImageList() {
     const imageInput = document.getElementById("image-input");
+    const countImages = Math.min(4, imageInput.files.length);
+    const countStr = "(" + countImages.toString() + "/4)";
+    document.getElementById("image-number-tracker").innerHTML = countStr;
+    
     var imageList = document.getElementById("attached-images-list");
     imageList.innerHTML = "";
-    Array.from(imageInput.files).forEach((file) => {
+    Array.from(imageInput.files).slice(0, 4).forEach((file) => {
         var li = document.createElement("li");
         li.innerHTML = file.name;
         imageList.appendChild(li);    
