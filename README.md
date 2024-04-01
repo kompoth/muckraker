@@ -14,3 +14,10 @@ Special mentions:
 - [Weasyprint](https://github.com/Kozea/WeasyPrint)
 - [magic.css](https://css.winterveil.net/)
 - [bashcorpo](https://www.deviantart.com/bashcorpo)
+
+## Contribution
+I'm still implementing the basic functionality and want to focus on that for now.
+So I'm not going to accept any feature requests or PRs just yet.
+
+In case of any unexpected behaviour please report it by creating an
+[issue](https://github.com/kompoth/muckraker/issues). Thanks in advance!
