@@ -56,7 +56,7 @@ async function requestPDF() {
     if (file) formData.append("images", file);
 
     try {
-        const resp = await fetch("http://127.0.0.1:8001/issue/", {
+        const resp = await fetch("/api/issue/", {
             method: "POST",
             body: formData 
         });
