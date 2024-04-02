@@ -11,11 +11,12 @@ function trackBodyLenght () {
 }
 
 function updateImageList() {
-    const imageInput = document.getElementById("image-input");
+    var imageInput = document.getElementById("image-input");
+    /*
     const countImages = Math.min(4, imageInput.files.length);
     const countStr = "(" + countImages.toString() + "/4)";
     document.getElementById("image-number-tracker").innerHTML = countStr;
-    
+
     var imageList = document.getElementById("attached-images-list");
     imageList.innerHTML = "";
     Array.from(imageInput.files).slice(0, 4).forEach((file) => {
@@ -23,6 +24,12 @@ function updateImageList() {
         li.innerHTML = file.name;
         imageList.appendChild(li);    
     });
+    */
+    const file = imageInput.files[0];
+    if (file && file.size > 2 * 1024 * 1024) {
+        alert("Too chunky! Please attach a file that weights less than 2 MB.");
+        imageInput.value = null;
+    }
 }
 
 async function requestPDF() {
@@ -45,13 +52,11 @@ async function requestPDF() {
     }
     formData.append("issue", JSON.stringify(issue));
 
-    const imageInput = document.getElementById("image-input");
-    Array.from(imageInput.files).slice(0, 4).forEach((file) => {
-        formData.append("images", file);
-    });
+    const file = document.getElementById("image-input").files[0];
+    if (file) formData.append("images", file);
 
     try {
-        const resp = await fetch("/api/issue/", {
+        const resp = await fetch("http://127.0.0.1:8001/issue/", {
             method: "POST",
             body: formData 
         });

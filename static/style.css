@@ -44,5 +44,25 @@ header p {
 /* File loading button */
 form input[type=file] {
     grid-column: span 2;
-    display: none;
+    /*display: none;*/
+}
+
+input[type=file]::file-selector-button {
+    background-color: transparent;
+    color: var(--fg);
+    padding: 4px;
+    margin-right: 1rem;
+    border: 1px solid var(--fg);
+    cursor: pointer;
+}
+
+input[type=file]:disabled::file-selector-button {
+    opacity: 0.5;
+    border-style: dashed;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+form input[type=file] {
+    grid-column: span 2;
 }

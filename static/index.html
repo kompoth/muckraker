@@ -54,10 +54,10 @@
                     </fieldset>
                     
                     <fieldset>
-                        <legend>Images <span id="image-number-tracker">(0/4)</span></legend>
+                        <legend>Images <!--span id="image-number-tracker">(0/4)</span--></legend>
                         <ul id="attached-images-list"></ul>
-                        <button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Add image</button>
-                        <input type="file" id="image-input" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
+                        <!--button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Add image</button-->
+                        <input type="file" id="image-input" accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
                     </fieldset>
 
                     <fieldset>
@@ -93,7 +93,10 @@ Article subtitle
 
 Italics with *asterisks* or _underscores_.
 
-Bold with **asterisks** or __underscores__.<!--![Image caption](image-file-name.png)-->
+Bold with **asterisks** or __underscores__.
+
+Insert images in your text like this:
+![Image caption](image-file-name.png)
 
 | A | simple          | table                    |
 | - | --------------- | ------------------------ |
