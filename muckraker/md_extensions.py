@@ -1,9 +1,10 @@
 import re
-import xml.etree.ElementTree as etree
+from typing import Any
 from pathlib import Path
 from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.inlinepatterns import ImageInlineProcessor, IMAGE_LINK_RE
+import xml.etree.ElementTree as etree
 
 
 class FilterExtension(Extension):
@@ -25,7 +26,11 @@ class FilterExtension(Extension):
 
 
 class ImagePathProcessor(ImageInlineProcessor):
-    """ Return a `img` element from the given match. """
+    """ Return an `img` element from the given match. """
+
+    def __init__(self, pattern: str, md: Markdown, image_dir: str = ""):
+        super().__init__(pattern, md)
+        self.image_dir = image_dir
 
     def handleMatch(
         self,
@@ -33,19 +38,27 @@ class ImagePathProcessor(ImageInlineProcessor):
         data: str
     ) -> tuple[etree.Element | None, int | None, int | None]:
         el, start, ind = super().handleMatch(m, data)
-        src = str(Path(el.get("src")).resolve())
-        el.set("src", "file://" + src)
+        src_path = Path(el.get("src"))
+        src_path = Path(self.image_dir) / src_path
+        el.set("src", "file://" + str(src_path.resolve()))
         return el, start, ind
 
 
 class ImagePathExtension(Extension):
     """ Modify image paths so that Weasyprint could handle them """
 
+    def __init__(self, **kwargs):
+        self.config = {"image_dir": ["", "Images root directory"]}
+        super().__init__(**kwargs)
+
     def extendMarkdown(self, md: Markdown) -> None:
         md.inlinePatterns.deregister("image_link")
         md.inlinePatterns.deregister("image_reference")
         md.inlinePatterns.deregister("short_image_ref")
 
-        md.inlinePatterns.register(
-            ImagePathProcessor(IMAGE_LINK_RE, md), "image_path", 140
+        processor = ImagePathProcessor(
+            IMAGE_LINK_RE,
+            md,
+            self.getConfig("image_dir")
         )
+        md.inlinePatterns.register(processor, "image_path", 140)

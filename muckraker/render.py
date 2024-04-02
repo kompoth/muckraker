@@ -9,45 +9,47 @@ from .md_extensions import FilterExtension, ImagePathExtension
 
 STATIC = Path(__file__).parent / "static"
 jinja_env = Environment(loader=FileSystemLoader(STATIC / "templates"))
-md = Markdown(extensions=[
-    "tables", "sane_lists",
-    FilterExtension(),
-    ImagePathExtension()
-])
 
 TAGS = set()
 
 
 def render_issue(
-    issue_config: dict,
+    config: dict,
+    heading: dict,
     body: str,
-    result_path: str
+    output: str,
+    image_dir: str = ""
 ) -> None:
     # Sanitize Markdown and convert it to HTML
-    body = md.convert(nh3.clean(body, tags=TAGS))
+    body = nh3.clean(body, tags=TAGS)
+    md = Markdown(extensions=[
+        "tables",
+        "sane_lists",
+        FilterExtension(),
+        ImagePathExtension(image_dir=image_dir)
+    ])
+    body = md.convert(body)
 
     # Sanitize all str heading fields
-    heading = issue_config["heading"]
     for key, value in heading.items():
         if isinstance(value, str):
             heading.update({key: nh3.clean(value, tags=TAGS)})
-    issue_config.update({"heading": heading})
 
     # Select background
-    if issue_config.get("bg") is not None:
-        bg_path = STATIC / "bg" / (issue_config["bg"] + ".jpg")
+    if config.get("bg") is not None:
+        bg_path = STATIC / "bg" / (config["bg"] + ".jpg")
         bg_file_str = "file://" + str(bg_path.resolve())
-        issue_config.update({"bg": bg_file_str})
+        config.update({"bg": bg_file_str})
 
     # Render HTML
     issue_template = jinja_env.get_template("newspaper.html")
-    html = issue_template.render(config=issue_config, body=body)
+    html = issue_template.render(config=config, heading=heading, body=body)
 
     # Render PDF
     font_config = FontConfiguration()
     css = CSS(STATIC / "style.css", font_config=font_config)
     HTML(string=html).write_pdf(
-        result_path,
+        output,
         stylesheets=[css],
         font_config=font_config
     )
@@ -59,10 +61,16 @@ if __name__ == "__main__":
 
     # Load issue configuration
     with open(sys.argv[1], "r") as fd:
-        issue_config = json.load(fd)
-    # Load issue body
+        config = json.load(fd)
+
+    # Load issue heading
     with open(sys.argv[2], "r") as fd:
+        heading = json.load(fd)
+
+    # Load issue body
+    with open(sys.argv[3], "r") as fd:
         body = fd.read()
 
     # Create PDF
-    render_issue(issue_config, body, sys.argv[3])
+    output = sys.argv[4]
+    render_issue(config, heading, body, output, image_dir=".")

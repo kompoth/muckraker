@@ -29,16 +29,16 @@
     
     <body class="paper-size">
         <header>
-            <h1>{{ config.heading.title }}</h1>
-            {%if config.heading.subtitle is not none %}
+            <h1>{{ heading.title }}</h1>
+            {%if heading.subtitle is not none %}
                 <h2>
-                    {{ config.heading.subtitle }}
+                    {{ heading.subtitle }}
                 </h2>
             {% endif %}
             <div class="issue-info">
-                <p class="issue-no">{{ config.heading.no }}</p>
-                <p class="issue-date">{{ config.heading.date }}</p>
-                <p class="issue-cost">{{ config.heading.cost }}</p>
+                <p class="issue-no">{{ heading.no }}</p>
+                <p class="issue-date">{{ heading.date }}</p>
+                <p class="issue-cost">{{ heading.cost }}</p>
             </div>
         </header>
 
