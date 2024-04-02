@@ -32,11 +32,8 @@ function updateImageList() {
     }
 }
 
-async function requestPDF() {
-    document.getElementById("print-button").disabled = true;
-    var formData = new FormData();
- 
-    const issue = {
+function prepareIssue() {
+    return JSON.stringify({
         config: {
             size: document.getElementById("size-select").value,
             bg: document.getElementById("bg-select").value
@@ -49,25 +46,46 @@ async function requestPDF() {
             cost: document.getElementById("issue-cost-input").value
         },
         body: document.getElementById("issue-body-textarea").value
-    }
-    formData.append("issue", JSON.stringify(issue));
+    });
+}
 
-    const file = document.getElementById("image-input").files[0];
-    if (file) formData.append("images", file);
+async function generatePDF() {
+    document.getElementById("print-button").disabled = true;
+    
+    var resp;
+    var respJson;
+    const resourceUrl = "/api/issue/";
 
     try {
-        const resp = await fetch("/api/issue/", {
+        resp = await fetch(resourceUrl, {
             method: "POST",
-            body: formData 
+            headers: {"Content-Type": "application/json"},
+            body: prepareIssue()
         });
+        respJson = await resp.json();
+        if (resp.ok) var issueId = respJson.issue_id
+        else throw new Error("Failed to send issue data");
 
-        if (resp.ok) {
-            /* If everything is ok, open recieved PDF */
-            resp.blob().then(blob => window.open(URL.createObjectURL(blob)));
+        const file = document.getElementById("image-input").files[0];
+        if (file) {    
+            var formData = new FormData();
+            formData.append("image", file, file.name);
+            resp = await fetch(resourceUrl + issueId, {
+                method: "PATCH",
+                body: formData
+            });
+            respJson = await resp.json();
+            if (!resp.ok) throw new Error("Failed to send file");
         }
+        
+        resp = await fetch(resourceUrl + issueId, {method: "GET"});
+        if (resp.ok) resp.blob().then(
+            blob => window.open(URL.createObjectURL(blob))
+        );
+        else throw new Error("Failed to recieve PDF");
     } catch {
-        console.error("Failed to get PDF");
-    }
+        console.error("Failed to generate PDF");
+    } 
 
     document.getElementById("print-button").disabled = false;
 }

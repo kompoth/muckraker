@@ -1,12 +1,14 @@
-import aiofiles
-import asyncio
-from fastapi import FastAPI, Response, UploadFile, Form
-from fastapi.exceptions import HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+import json
 from io import BytesIO
 from pathlib import Path
-from tempfile import TemporaryDirectory
-from typing import List, IO
+from shutil import rmtree
+from tempfile import gettempdir, mkdtemp
+
+import aiofiles
+from fastapi import Depends, FastAPI, File, Response, UploadFile
+from fastapi.exceptions import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from .models import Issue
 from .render import render_issue
@@ -20,17 +22,39 @@ origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=["POST"]
+    allow_methods=["POST", "PATCH", "GET"]
 )
 
 
-async def process_image(image: IO, dir_path: Path):
+@app.post("/issue/")
+async def create_s_issue(issue: Issue):
+    dir_path = mkdtemp(prefix="muckraker")
+    issue_path = Path(dir_path) / "issue.json"
+    with open(issue_path, "w") as fd:
+        fd.write(issue.model_dump_json())
+    return {"issue_id": dir_path.split("muckraker")[-1]}
+
+
+async def dir_path(issue_id: str):
+    dir_path = Path(gettempdir()) / f"muckraker{issue_id}"
+    if not (dir_path.exists() and dir_path.is_dir()):
+        raise HTTPException(status_code=404, detail="No data")
+    return dir_path
+
+
+@app.patch("/issue/{issue_id}")
+async def patch_s_issue(
+    dir_path: Path = Depends(dir_path),
+    image: UploadFile = File()
+):
     # Validate image
     if image.content_type not in ACCEPTED_FILE_TYPES:
         detail = f"Invalid file type: {image.filename}"
+        rmtree(dir_path)
         raise HTTPException(415, detail=detail)
     if image.size > MAX_IMAGE_SIZE:
         detail = f"File is too large: {image.filename}"
+        rmtree(dir_path)
         raise HTTPException(413, detail=detail)
 
     # Save image to the disk
@@ -38,35 +62,31 @@ async def process_image(image: IO, dir_path: Path):
     async with aiofiles.open(image_path, "wb") as fd:
         while content := await image.read(IMAGE_BATCH):
             await fd.write(content)
+    return JSONResponse(content="Image uploaded")
 
 
-@app.post("/issue/")
-async def create_issue(
-    issue: Issue = Form(),
-    images: List[UploadFile] = []
-):
-    with TemporaryDirectory() as temp_dir:
-        temp_dir_path = Path(temp_dir)
+@app.get("/issue/{issue_id}")
+async def get_s_issue(dir_path: Path = Depends(dir_path)):
+    # Read issue data
+    with open(dir_path / "issue.json", "r") as fd:
+        issue_dict = json.load(fd)
 
-        # Asynchronously process files
-        tasks = [process_image(image, temp_dir_path) for image in images]
-        await asyncio.gather(*tasks)
+    # Render PDF and write it to buffer
+    pdf_path = dir_path / "out.pdf"
+    render_issue(
+        config=issue_dict["config"],
+        heading=issue_dict["heading"],
+        body=issue_dict["body"],
+        output=pdf_path,
+        image_dir=dir_path
+    )
+    with open(pdf_path, "rb") as fd:
+        buf = BytesIO(fd.read())
 
-        # Render PDF and save it in the temp_dir
-        pdf_path = temp_dir_path / "out.pdf"
-        render_issue(
-            config=issue.config.model_dump(),
-            heading=issue.heading.model_dump(),
-            body=issue.body,
-            output=pdf_path,
-            image_dir=temp_dir_path
-        )
+    # Delete tempdir
+    rmtree(dir_path)
 
-        # Save PDF to the buffer
-        with open(pdf_path, "rb") as fd:
-            buf = BytesIO(fd.read())
-
-    # Get it from the buffer
+    # Get pdf from buffer
     pdf_bytes = buf.getvalue()
     buf.close()
 
