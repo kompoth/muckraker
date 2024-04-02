@@ -27,7 +27,7 @@ function updateImageList() {
     */
     const file = imageInput.files[0];
     if (file && file.size > 2 * 1024 * 1024) {
-        alert("Too chunky! Please attach a file that weights less than 2 MB.");
+        alert("Too chunky! Please attach a file that weights less than 2MB.");
         imageInput.value = null;
     }
 }

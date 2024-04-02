@@ -55,6 +55,10 @@
                     
                     <fieldset>
                         <legend>Images <!--span id="image-number-tracker">(0/4)</span--></legend>
+                        <p>
+                            Upload an image and insert its tag <code>![Image caption](image-name.png)</code> anywhere in the text.
+                            Image must not be larger than 2MB.
+                        </p>
                         <ul id="attached-images-list"></ul>
                         <!--button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Add image</button-->
                         <input type="file" id="image-input" accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
