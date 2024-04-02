@@ -3,8 +3,12 @@ from fastapi.testclient import TestClient
 
 from muckraker.main import app
 
-# Is it a good idea to set headers manually?
+# TODO: get rid off explicit header setting. I currently have to do that
+# as POST /issue/ recieves a complicated multipart data. Maybe it would
+# be better to move image uploading to another endpoint
 FORM_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded'}
+# TODO: add image processing tests. For now TestClient doesn't send them,
+# might be due to a mixed multipart data.
 
 client = TestClient(app)
 
