@@ -1,6 +1,6 @@
 import aiofiles
 import asyncio
-from fastapi import FastAPI, Response, UploadFile, File, Form
+from fastapi import FastAPI, Response, UploadFile, Form
 from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from io import BytesIO
