@@ -1,9 +1,10 @@
 import re
+import xml.etree.ElementTree as etree
 from pathlib import Path
+
 from markdown import Markdown
 from markdown.extensions import Extension
-from markdown.inlinepatterns import ImageInlineProcessor, IMAGE_LINK_RE
-import xml.etree.ElementTree as etree
+from markdown.inlinepatterns import IMAGE_LINK_RE, ImageInlineProcessor
 
 
 class FilterExtension(Extension):

@@ -1,8 +1,9 @@
 from pathlib import Path
+
 import nh3
-from markdown import Markdown
 from jinja2 import Environment, FileSystemLoader
-from weasyprint import HTML, CSS
+from markdown import Markdown
+from weasyprint import CSS, HTML
 from weasyprint.text.fonts import FontConfiguration
 
 from .md_extensions import FilterExtension, ImagePathExtension
@@ -61,8 +62,8 @@ def render_issue(
 
 
 if __name__ == "__main__":
-    import sys
     import json
+    import sys
 
     # Load issue configuration
     with open(sys.argv[1], "r") as fd:
