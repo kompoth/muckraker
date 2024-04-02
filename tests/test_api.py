@@ -1,27 +1,37 @@
-import copy
+import json
 from fastapi.testclient import TestClient
 
 from muckraker.main import app
 
+# Is it a good idea to set headers manually?
+FORM_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded'}
 
 client = TestClient(app)
 
 
-def test_issue_thick_body(issue):
-    issue["body"] = issue["body"] * 100
-    resp = client.post("/issue/", json=issue)
+def test_issue_correct(issue_dict):
+    content = "issue=" + json.dumps(issue_dict)
+    resp = client.post(
+        "/issue/",
+        content=content,
+        headers=FORM_HEADERS
+    )
+    assert resp.status_code == 200
+
+
+def test_issue_thick_body(issue_dict):
+    issue_dict["body"] = issue_dict["body"] * 100
+    content = "issue=" + json.dumps(issue_dict)
+    resp = client.post("/issue/", content=content, headers=FORM_HEADERS)
     assert resp.status_code == 422
 
 
-def test_issue_thick_heading(issue):
-    for field in issue["config"]["heading"]:
-        print(field)
-        new_issue = copy.copy(issue)
-        new_issue["config"]["heading"][field] = "a" * 1000
-        resp = client.post("/issue/", json=new_issue)
-        assert resp.status_code == 422
-
-
-def test_issue_correct(issue):
-    resp = client.post("/issue/", json=issue)
-    assert resp.status_code == 200
+def test_issue_thick_heading(issue_dict):
+    any_field = list(issue_dict["heading"].keys())[0]
+    issue_dict["heading"][any_field] = "a" * 100
+    content = "issue=" + json.dumps(issue_dict)
+    resp = client.post("/issue/", content=content, headers=FORM_HEADERS)
+    assert resp.status_code == 422
+    detail = resp.json()["detail"][0]
+    assert detail["type"] == "string_too_long"
+    assert detail["loc"] == ["body", "issue", "heading", any_field]

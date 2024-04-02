@@ -27,30 +27,33 @@ function updateImageList() {
 
 async function requestPDF() {
     document.getElementById("print-button").disabled = true;
+    var formData = new FormData();
  
-    const requestBody = {
+    const issue = {
         config: {
             size: document.getElementById("size-select").value,
-            bg: document.getElementById("bg-select").value,
-            heading: {
-                title: document.getElementById("title-input").value,
-                subtitle: document.getElementById("subtitle-input").value,
-                no: document.getElementById("issue-no-input").value,
-                date: document.getElementById("issue-date-input").value,
-                cost: document.getElementById("issue-cost-input").value
-            }
+            bg: document.getElementById("bg-select").value
+        },
+        heading: {
+            title: document.getElementById("title-input").value,
+            subtitle: document.getElementById("subtitle-input").value,
+            no: document.getElementById("issue-no-input").value,
+            date: document.getElementById("issue-date-input").value,
+            cost: document.getElementById("issue-cost-input").value
         },
         body: document.getElementById("issue-body-textarea").value
     }
+    formData.append("issue", JSON.stringify(issue));
+
+    const imageInput = document.getElementById("image-input");
+    Array.from(imageInput.files).slice(0, 4).forEach((file) => {
+        formData.append("images", file);
+    });
 
     try {
-        const resp = await fetch("/api/issue", {
+        const resp = await fetch("/api/issue/", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "accept": "application/json"
-            },
-            body: JSON.stringify(requestBody)
+            body: formData 
         });
 
         if (resp.ok) {

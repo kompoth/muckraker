@@ -43,7 +43,12 @@ def render_issue(
 
     # Render HTML
     issue_template = jinja_env.get_template("newspaper.html")
-    html = issue_template.render(config=config, heading=heading, body=body)
+    html = issue_template.render(
+        config=config,
+        heading=heading,
+        body=body,
+        static="file://" + str(STATIC.resolve())
+    )
 
     # Render PDF
     font_config = FontConfiguration()

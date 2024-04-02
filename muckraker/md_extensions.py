@@ -1,5 +1,4 @@
 import re
-from typing import Any
 from pathlib import Path
 from markdown import Markdown
 from markdown.extensions import Extension
