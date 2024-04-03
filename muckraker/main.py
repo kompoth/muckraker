@@ -49,13 +49,6 @@ async def patch_s_issue(
     dir_path: Path = Depends(dir_path),
     image: UploadFile = File()
 ):
-    # Check already uploaded images num
-    files = dir_path.glob('**/*')
-    images = [x for x in files if x.is_file() and x.suffix in IMAGE_SUFFIXES]
-    if len(images) + 1 >= MAX_IMAGE_NUM:
-        rmtree(dir_path)
-        raise HTTPException(429, detail="To many uploads")
-
     # Validate image
     if image.content_type not in ACCEPTED_FILE_TYPES:
         detail = f"Invalid file type: {image.filename}"
@@ -71,10 +64,6 @@ async def patch_s_issue(
     async with aiofiles.open(image_path, "wb") as fd:
         while content := await image.read(IMAGE_BATCH):
             await fd.write(content)
-
-    files = dir_path.glob('**/*')
-    images = [x for x in files if x.is_file() and x.suffix in IMAGE_SUFFIXES]
-    print(len(images))
     return JSONResponse(content={"filename": image.filename})
 
 

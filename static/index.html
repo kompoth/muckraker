@@ -54,14 +54,15 @@
                     </fieldset>
                     
                     <fieldset>
-                        <legend>Images <!--span id="image-number-tracker">(0/4)</span--></legend>
+                        <legend>Images <span id="image-number-tracker">(0/4)</span></legend>
                         <p>
-                            Upload an image and insert its tag <code>![Image caption](image-name.png)</code> anywhere in the text.
+                            Upload an image and insert its tag anywhere in the text:<br>
+                            <code>![Image caption](image-name.png)</code><br>
                             Image must not be larger than 2MB.
                         </p>
                         <ul id="attached-images-list"></ul>
-                        <!--button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Add image</button-->
-                        <input type="file" id="image-input" accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
+                        <button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Select images</button>
+                        <input type="file" id="image-input" style="display: none;" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
                     </fieldset>
 
                     <fieldset>

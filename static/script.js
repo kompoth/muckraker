@@ -12,24 +12,28 @@ function trackBodyLenght () {
 
 function updateImageList() {
     var imageInput = document.getElementById("image-input");
-    /*
+    var BreakException = {};
+    try {
+        Array.from(imageInput.files).forEach((file) => {
+            if (file && file.size > 2 * 1024 * 1024) throw BreakException;
+        });
+    } catch(exc) {
+        if (exc != BreakException) throw exc;
+        imageInput.value = null;
+        alert("Image is too chunky!");
+    }
+    
     const countImages = Math.min(4, imageInput.files.length);
     const countStr = "(" + countImages.toString() + "/4)";
     document.getElementById("image-number-tracker").innerHTML = countStr;
 
     var imageList = document.getElementById("attached-images-list");
     imageList.innerHTML = "";
-    Array.from(imageInput.files).slice(0, 4).forEach((file) => {
+    Array.from(imageInput.files).slice(0, countImages).forEach((file) => {
         var li = document.createElement("li");
         li.innerHTML = file.name;
         imageList.appendChild(li);    
     });
-    */
-    const file = imageInput.files[0];
-    if (file && file.size > 2 * 1024 * 1024) {
-        alert("Too chunky! Please attach a file that weights less than 2MB.");
-        imageInput.value = null;
-    }
 }
 
 function prepareIssue() {
@@ -55,6 +59,7 @@ async function generatePDF() {
     var resp;
     var respJson;
     const resourceUrl = "/api/issue/";
+    //const resourceUrl = "http://127.0.0.1:8001/issue/";
 
     try {
         resp = await fetch(resourceUrl, {
@@ -66,8 +71,11 @@ async function generatePDF() {
         if (resp.ok) var issueId = respJson.issue_id
         else throw new Error("Failed to send issue data");
 
-        const file = document.getElementById("image-input").files[0];
-        if (file) {    
+        const files = Array.from(
+            document.getElementById("image-input").files
+        ).slice(0, 4);
+        
+        await Promise.all(files.map(async (file) => {
             var formData = new FormData();
             formData.append("image", file, file.name);
             resp = await fetch(resourceUrl + issueId, {
@@ -76,7 +84,7 @@ async function generatePDF() {
             });
             respJson = await resp.json();
             if (!resp.ok) throw new Error("Failed to send file");
-        }
+        }));
         
         resp = await fetch(resourceUrl + issueId, {method: "GET"});
         if (resp.ok) resp.blob().then(

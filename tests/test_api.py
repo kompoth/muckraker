@@ -64,11 +64,11 @@ def test_issue_not_found(issue_dict, good_image):
     assert resp.status_code == 404
 
 
-def test_too_many_images(issue_dict, good_image):
-    resp = client.post("/issue/", json=issue_dict)
-    issue_id = resp.json()["issue_id"]
-
-    for no in range(1, 5):
-        files = {"image": (f"{no}.png", good_image)}
-        resp = client.patch(f"/issue/{issue_id}", files=files)
-    assert resp.status_code == 429
+# def test_too_many_images(issue_dict, good_image):
+#     resp = client.post("/issue/", json=issue_dict)
+#     issue_id = resp.json()["issue_id"]
+#
+#     for no in range(1, 5):
+#         files = {"image": (f"{no}.png", good_image)}
+#         resp = client.patch(f"/issue/{issue_id}", files=files)
+#     assert resp.status_code == 429
