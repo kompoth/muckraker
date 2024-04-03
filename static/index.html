@@ -16,7 +16,7 @@
         <title>Muckraker</title>
     </head>
 
-    <body onload="trackBodyLenght();">
+    <body onload="reloadForm(); trackBodyLenght();">
         <header>
             <h1>Muckraker</h1>
             <p>A fictional gazette generator for your creative projects.</p>
@@ -29,11 +29,11 @@
         </header>
 
         <main> 
-            <section id="editor">
+            <section id="generator">
                 <h2>Issue creation</h2>
                 <p>Configure your gazette, compose articles and push <em>Send to print</em> to generate a PDF.</p> 
                 <p>See a sample issue screenshot <a href="https://raw.githubusercontent.com/kompoth/muckraker/main/media/issue.jpg">here</a>.</p> 
-                <form>
+                <form id="generator-form">
                     <fieldset>
                         <legend>Heading</legend>
                         <label for="title-input">Title:</label>
@@ -84,6 +84,14 @@
                     </fieldset>
 
                     <button type="button" id="print-button" onclick="generatePDF();">Send to print</button>
+                    <button type="button" id="save-button" onclick="saveForm();">Save*</button>
+                    <p style="grid-column: span 2; text-align: right; margin-top: -0.5rem;">
+                        <small>
+                            *Writes inputs to your cache and fills them in on the next page load.
+                            <br>
+                            You'll still have to reupload images.
+                        </small>
+                    </p>
                 </form>
             </section>
             

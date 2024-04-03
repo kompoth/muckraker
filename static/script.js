@@ -96,3 +96,26 @@ async function generatePDF() {
 
     document.getElementById("print-button").disabled = false;
 }
+
+function saveForm() {
+    document.getElementById("save-button").disabled = true;
+
+    const elements = document.querySelectorAll(
+        "#generator-form input[type=text],textarea,select"
+    );
+    elements.forEach((el) => {
+        localStorage.setItem("muckracker-" + el.name, el.value);
+    });
+
+    document.getElementById("save-button").disabled = false;
+}
+
+function reloadForm() {
+    var elements = document.querySelectorAll(
+        "#generator-form input[type=text],textarea,select" 
+    );
+    elements.forEach((el) => {
+        let value = localStorage.getItem("muckracker-" + el.name);
+        if (value && value != "") el.value = value;
+    });
+}
