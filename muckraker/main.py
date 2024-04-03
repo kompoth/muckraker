@@ -7,7 +7,8 @@ from typing import List
 
 import aiofiles
 from fastapi import Depends, FastAPI, File, Response, UploadFile
-from fastapi.exceptions import HTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -29,6 +30,24 @@ app.add_middleware(
 )
 
 
+async def get_dir_path(issue_id: str):
+    dir_path = Path(gettempdir()) / f"muckraker{issue_id}"
+    if not (dir_path.exists() and dir_path.is_dir()):
+        raise HTTPException(status_code=404, detail="No data")
+    return dir_path
+
+
+@app.exception_handler(RequestValidationError)
+async def clear_tempdir_handler(request, exc):
+    issue_id = request.path_params.get("issue_id")
+    if issue_id:
+        rmtree(await get_dir_path(issue_id))
+    return JSONResponse(
+        status_code=422,
+        content=jsonable_encoder({"detail": exc.errors()}),
+    )
+
+
 @app.post("/issue/")
 async def create_s_issue(issue: Issue):
     dir_path = mkdtemp(prefix="muckraker")
@@ -38,16 +57,9 @@ async def create_s_issue(issue: Issue):
     return {"issue_id": dir_path.split("muckraker")[-1]}
 
 
-async def dir_path(issue_id: str):
-    dir_path = Path(gettempdir()) / f"muckraker{issue_id}"
-    if not (dir_path.exists() and dir_path.is_dir()):
-        raise HTTPException(status_code=404, detail="No data")
-    return dir_path
-
-
 @app.patch("/issue/{issue_id}")
 async def patch_s_issue(
-    dir_path: Path = Depends(dir_path),
+    dir_path: Path = Depends(get_dir_path),
     images: List[UploadFile] = File()
 ):
     # Check if there are already images
@@ -86,7 +98,7 @@ async def patch_s_issue(
 
 
 @app.get("/issue/{issue_id}")
-async def get_s_issue(dir_path: Path = Depends(dir_path)):
+async def get_s_issue(dir_path: Path = Depends(get_dir_path)):
     # Read issue data
     with open(dir_path / "issue.json", "r") as fd:
         issue_dict = json.load(fd)
