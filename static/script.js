@@ -58,8 +58,8 @@ async function generatePDF() {
     
     var resp;
     var respJson;
-    //const resourceUrl = "/api/issue/";
-    const resourceUrl = "http://127.0.0.1:8001/issue/";
+    const resourceUrl = "/api/issue/";
+    //const resourceUrl = "http://127.0.0.1:8001/issue/";
 
     try {
         resp = await fetch(resourceUrl, {
