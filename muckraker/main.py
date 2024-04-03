@@ -3,6 +3,7 @@ from io import BytesIO
 from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir, mkdtemp
+from typing import List
 
 import aiofiles
 from fastapi import Depends, FastAPI, File, Response, UploadFile
@@ -47,23 +48,40 @@ async def dir_path(issue_id: str):
 @app.patch("/issue/{issue_id}")
 async def patch_s_issue(
     dir_path: Path = Depends(dir_path),
-    image: UploadFile = File()
+    images: List[UploadFile] = File()
 ):
-    # Validate image
-    if image.content_type not in ACCEPTED_FILE_TYPES:
-        detail = f"Invalid file type: {image.filename}"
+    # Check if there are already images
+    uploaded_files = dir_path.glob('**/*')
+    uploaded_images = [
+        x for x in uploaded_files
+        if x.is_file() and x.suffix in IMAGE_SUFFIXES
+    ]
+    if len(uploaded_images) > 0:
         rmtree(dir_path)
-        raise HTTPException(415, detail=detail)
-    if image.size > MAX_IMAGE_SIZE:
-        detail = f"File is too large: {image.filename}"
-        rmtree(dir_path)
-        raise HTTPException(413, detail=detail)
+        raise HTTPException(429, detail="To many uploads")
 
-    # Save image to the disk
-    image_path = dir_path / image.filename
-    async with aiofiles.open(image_path, "wb") as fd:
-        while content := await image.read(IMAGE_BATCH):
-            await fd.write(content)
+    # Validate number of images
+    if len(images) > MAX_IMAGE_NUM:
+        rmtree(dir_path)
+        raise HTTPException(413, detail="To many images")
+
+    # Validate images
+    for image in images:
+        if image.content_type not in ACCEPTED_FILE_TYPES:
+            detail = f"Invalid file type: {image.filename}"
+            rmtree(dir_path)
+            raise HTTPException(415, detail=detail)
+        if image.size > MAX_IMAGE_SIZE:
+            detail = f"File is too large: {image.filename}"
+            rmtree(dir_path)
+            raise HTTPException(413, detail=detail)
+
+    # Save images to the disk
+    for image in images:
+        image_path = dir_path / image.filename
+        async with aiofiles.open(image_path, "wb") as fd:
+            while content := await image.read(IMAGE_BATCH):
+                await fd.write(content)
     return JSONResponse(content={"filename": image.filename})
 
 

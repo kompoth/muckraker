@@ -58,8 +58,8 @@ async function generatePDF() {
     
     var resp;
     var respJson;
-    const resourceUrl = "/api/issue/";
-    //const resourceUrl = "http://127.0.0.1:8001/issue/";
+    //const resourceUrl = "/api/issue/";
+    const resourceUrl = "http://127.0.0.1:8001/issue/";
 
     try {
         resp = await fetch(resourceUrl, {
@@ -71,20 +71,19 @@ async function generatePDF() {
         if (resp.ok) var issueId = respJson.issue_id
         else throw new Error("Failed to send issue data");
 
-        const files = Array.from(
-            document.getElementById("image-input").files
-        ).slice(0, 4);
-        
-        await Promise.all(files.map(async (file) => {
+        const imageInput = document.getElementById("image-input");
+        if (imageInput.files.length > 0) {
             var formData = new FormData();
-            formData.append("image", file, file.name);
+            Array.from(imageInput.files).slice(0, 4).forEach((file) => {
+                formData.append("images", file, file.name);
+            });
             resp = await fetch(resourceUrl + issueId, {
                 method: "PATCH",
                 body: formData
             });
             respJson = await resp.json();
             if (!resp.ok) throw new Error("Failed to send file");
-        }));
+        }
         
         resp = await fetch(resourceUrl + issueId, {method: "GET"});
         if (resp.ok) resp.blob().then(

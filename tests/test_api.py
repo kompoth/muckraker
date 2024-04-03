@@ -10,14 +10,12 @@ def test_correct(issue_dict, good_image):
     assert resp.status_code == 200
     issue_id = resp.json()["issue_id"]
 
-    files = {"image": good_image}
+    files = {"images": good_image}
     resp = client.patch(f"/issue/{issue_id}", files=files)
     assert resp.status_code == 200
 
     resp = client.get(f"/issue/{issue_id}")  # Deletes tempdir
     assert resp.status_code == 200
-    with open("file.pdf", "wb") as fd:
-        fd.write(resp.content)
 
 
 def test_thick_body(issue_dict):
@@ -45,7 +43,7 @@ def test_thick_image(issue_dict, thick_image):
     resp = client.post("/issue/", json=issue_dict)
     issue_id = resp.json()["issue_id"]
 
-    files = {"image": thick_image}
+    files = {"images": thick_image}
     # Deletes tempdir on 413
     resp = client.patch(f"/issue/{issue_id}", files=files)
     assert resp.status_code == 413
@@ -59,16 +57,30 @@ def test_issue_not_found(issue_dict, good_image):
     resp = client.get(f"/issue/{issue_id}")
     assert resp.status_code == 404
 
-    files = {"image": good_image}
+    files = {"images": good_image}
     resp = client.patch(f"/issue/{issue_id}", files=files)
     assert resp.status_code == 404
 
 
-# def test_too_many_images(issue_dict, good_image):
-#     resp = client.post("/issue/", json=issue_dict)
-#     issue_id = resp.json()["issue_id"]
-#
-#     for no in range(1, 5):
-#         files = {"image": (f"{no}.png", good_image)}
-#         resp = client.patch(f"/issue/{issue_id}", files=files)
-#     assert resp.status_code == 429
+def test_multiple_images(issue_dict, good_image):
+    resp = client.post("/issue/", json=issue_dict)
+    issue_id = resp.json()["issue_id"]
+
+    # Send 4 images
+    files = [("images", (f"{no}.png", good_image)) for no in range(1, 5)]
+    resp = client.patch(f"/issue/{issue_id}", files=files)
+    assert resp.status_code == 200
+
+    resp = client.get(f"/issue/{issue_id}")  # Deletes tempdir
+    assert resp.status_code == 200
+
+
+def test_too_many_images(issue_dict, good_image):
+    resp = client.post("/issue/", json=issue_dict)
+    issue_id = resp.json()["issue_id"]
+
+    # Send 5 images
+    files = [("images", (f"{no}.png", good_image)) for no in range(1, 6)]
+    # Deletes tempdir on 413
+    resp = client.patch(f"/issue/{issue_id}", files=files)
+    assert resp.status_code == 413
