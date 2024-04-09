@@ -44,9 +44,7 @@ header p {
 /* File loading button */
 form input[type=file] {
     grid-column: span 2;
-    /*display: none;*/
 }
-
 input[type=file]::file-selector-button {
     background-color: transparent;
     color: var(--fg);
@@ -55,14 +53,32 @@ input[type=file]::file-selector-button {
     border: 1px solid var(--fg);
     cursor: pointer;
 }
-
 input[type=file]:disabled::file-selector-button {
     opacity: 0.5;
     border-style: dashed;
     cursor: not-allowed;
     text-decoration: line-through;
 }
-
 form input[type=file] {
     grid-column: span 2;
 }
+
+/* Custom complex fieldset */
+form .grid-8 {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-gap: 0 0.5rem;
+}
+form .col-8 {
+    grid-column: span 8 !important;
+}
+form .col-7 {
+    grid-column: span 7 !important;
+}
+form .col-3 {
+    grid-column: span 3 !important;
+}
+form .col-2 {
+    grid-column: span 2 !important;
+}
+

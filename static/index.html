@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="A vintage gazette generator for your creative projects."/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link name="canonical" href="https://https://muckraker.kmiziz.xyz/">
+        <link rel="canonical" href="https://muckraker.kmiziz.xyz/">
 
         <link rel="stylesheet" href="https://unpkg.com/normalize.css">
         <link rel="stylesheet" href="https://unpkg.com/magick.css">
@@ -13,11 +13,11 @@
         <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
 
-        <script src="script.js"></script>
+        <script src="main.js"></script>
         <title>Muckraker</title>
     </head>
 
-    <body onload="reloadForm(); trackBodyLenght();">
+    <body onload="onLoad();">
         <header>
             <h1>Muckraker</h1>
             <p>A vintage gazette generator for your creative projects.</p>
@@ -35,23 +35,33 @@
                 <p>Configure your gazette, compose articles and push <em>Send to print</em> to generate a PDF.</p> 
                 <p>See a sample issue screenshot <a href="https://raw.githubusercontent.com/kompoth/muckraker/main/media/issue.jpg">here</a>.</p> 
                 <form id="generator-form">
-                    <fieldset>
-                        <legend>Heading</legend>
-                        <label for="title-input">Title:</label>
-                        <input type="text" maxlength="50" id="title-input" name="title"/>
-                        <label for="subtitle-input">Subtitle:</label>
-                        <input type="text" maxlength="50" id="subtitle-input" name="subtitle"/>
-                        <label for="issue-no-input">Issue number:</label>
-                        <input type="text" maxlength="50" id="issue-no-input" name="issue-no"/>
-                        <label for="issue-date-input">Issue date:</label>
-                        <input type="text" maxlength="50" id="issue-date-input" name="issue-date"/>
-                        <label for="issue-cost-input">Cost:</label>
-                        <input type="text" maxlength="50" id="issue-cost-input" name="issue-cost"/>
+                    <fieldset class="grid-8">
+                        <legend class="col-8">Heading</legend>
+                        <label class="col-8" for="title-input">Title:</label>
+                        <input class="col-7" type="text" maxlength="50" id="title-input" name="title">
+                        <select class="col-1" id="title-font-size-select"></select>
+                        <label class="col-8" for="subtitle-input">Subtitle:</label>
+                        <input class="col-7" type="text" maxlength="50" id="subtitle-input" name="subtitle">
+                        <select class="col-1" id="subtitle-font-size-select"></select>
+                        <label class="col-8">Details:</label>
+                        <input class="col-2" type="text" maxlength="50" id="issue-no-input" name="issue-no" placeholder="№ 22">
+                        <input class="col-3" type="text" maxlength="50" id="issue-date-input" name="issue-date" placeholder="April 1, 2024">
+                        <input class="col-2" type="text" maxlength="50" id="issue-cost-input" name="issue-cost" placeholder="Price $1">
+                        <select class="col-1" id="details-font-size-select"></select>
                     </fieldset>
                     
                     <fieldset>
                         <legend>Issue body <span id="body-length-tracker">(0/6,000)</span></legend>
                         <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
+                        <label for="body-titles-font-size-select">Titles size:
+                            <select id="body-titles-font-size-select"></select>
+                        </label>
+                        <label for="body-subtitles-font-size-select">Subtitles size:
+                            <select id="body-subtitles-font-size-select"></select>
+                        </label>
+                        <label for="body-text-font-size-select">Text size:
+                            <select id="body-text-font-size-select"></select>
+                        </label>
                     </fieldset>
                     
                     <fieldset>
@@ -125,10 +135,8 @@ Insert images in your text like this:
 
             <footer>
                 <hr>
-                <small>
-                    <p>Made by <a href="https://github.com/kompoth">Vasily Negrebetskiy</a></p>
-                    <p>This page is powered by <a href="https://css.winterveil.net/">magic.css</a><p>
-                </small>
+                <p>Made by <a href="https://github.com/kompoth">Vasily Negrebetskiy</a></p>
+                <p>This page is powered by <a href="https://css.winterveil.net/">magic.css</a></p>
             </footer>
              
         </main>

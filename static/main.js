@@ -1,3 +1,5 @@
+/* == On-page routines == */
+
 function formatThousands(val) {
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -35,6 +37,59 @@ function updateImageList() {
         imageList.appendChild(li);    
     });
 }
+
+function saveForm() {
+    document.getElementById("save-button").disabled = true;
+
+    const elements = document.querySelectorAll(
+        "#generator-form input[type=text],textarea,select"
+    );
+    elements.forEach((el) => {
+        localStorage.setItem("muckracker-" + el.name, el.value);
+    });
+
+    document.getElementById("save-button").disabled = false;
+}
+
+function reloadForm() {
+    var elements = document.querySelectorAll(
+        "#generator-form input[type=text],textarea,select" 
+    );
+    elements.forEach((el) => {
+        let value = localStorage.getItem("muckracker-" + el.name);
+        if (value && value != "") el.value = value;
+    });
+}
+
+function setFontSizes(elementId, min, max, step) {
+    var element = document.getElementById(elementId);
+    const sizes = Array.from(
+        {length: (max - min) / step + 1},
+        (val, indx) => min + indx * step
+    );
+ 
+    sizes.forEach((size) => {
+        var optionElement = document.createElement("option");
+        optionElement.setAttribute("value", size);
+        optionElement.textContent = size + " pt";
+        element.appendChild(optionElement);
+    });
+}
+
+function onLoad() {
+    setFontSizes("title-font-size-select", 32, 64, 2);
+    setFontSizes("subtitle-font-size-select", 12, 32, 2);
+    setFontSizes("details-font-size-select", 8, 18, 2);
+    setFontSizes("body-titles-font-size-select", 8, 18, 2);
+    setFontSizes("body-subtitles-font-size-select", 8, 18, 2);
+    setFontSizes("body-text-font-size-select", 8, 18, 2);
+    
+    reloadForm();
+    trackBodyLenght();
+}
+
+
+/* == API interaction == */
 
 function prepareIssue() {
     return JSON.stringify({
@@ -95,27 +150,4 @@ async function generatePDF() {
     } 
 
     document.getElementById("print-button").disabled = false;
-}
-
-function saveForm() {
-    document.getElementById("save-button").disabled = true;
-
-    const elements = document.querySelectorAll(
-        "#generator-form input[type=text],textarea,select"
-    );
-    elements.forEach((el) => {
-        localStorage.setItem("muckracker-" + el.name, el.value);
-    });
-
-    document.getElementById("save-button").disabled = false;
-}
-
-function reloadForm() {
-    var elements = document.querySelectorAll(
-        "#generator-form input[type=text],textarea,select" 
-    );
-    elements.forEach((el) => {
-        let value = localStorage.getItem("muckracker-" + el.name);
-        if (value && value != "") el.value = value;
-    });
 }
