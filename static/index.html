@@ -37,43 +37,44 @@
                 <form id="generator-form">
                     <fieldset class="grid-8">
                         <legend class="col-8">Heading</legend>
-                        <label class="col-8" for="title-input">Title:</label>
-                        <input class="col-7" type="text" maxlength="50" id="title-input" name="title">
-                        <select class="col-1" id="title-font-size-select"></select>
-                        <label class="col-8" for="subtitle-input">Subtitle:</label>
-                        <input class="col-7" type="text" maxlength="50" id="subtitle-input" name="subtitle">
-                        <select class="col-1" id="subtitle-font-size-select"></select>
-                        <label class="col-8">Details:</label>
-                        <input class="col-2" type="text" maxlength="50" id="issue-no-input" name="issue-no" placeholder="№ 22">
-                        <input class="col-3" type="text" maxlength="50" id="issue-date-input" name="issue-date" placeholder="April 1, 2024">
-                        <input class="col-2" type="text" maxlength="50" id="issue-cost-input" name="issue-cost" placeholder="Price $1">
-                        <select class="col-1" id="details-font-size-select"></select>
+                        <label  class="col-8" for="title-input">Title:</label>
+                        <input  class="col-7" type="text" maxlength="50" id="title-input" name="title">
+                        <select class="col-1" id="title-font-size-select" name="title-font-size"></select>
+                        <label  class="col-8" for="subtitle-input">Subtitle:</label>
+                        <input  class="col-7" type="text" maxlength="50" id="subtitle-input" name="subtitle">
+                        <select class="col-1" id="subtitle-font-size-select" name="subtitle-font-size"></select>
+                        <label  class="col-8">Details:</label>
+                        <input  class="col-2" type="text" maxlength="50" id="issue-no-input" name="issue-no" placeholder="№ 22">
+                        <input  class="col-3" type="text" maxlength="50" id="issue-date-input" name="issue-date" placeholder="April 1, 2024">
+                        <input  class="col-2" type="text" maxlength="50" id="issue-cost-input" name="issue-cost" placeholder="Price $1">
+                        <select class="col-1" id="details-font-size-select" name="details-font-size"></select>
                     </fieldset>
                     
                     <fieldset>
                         <legend>Issue body <span id="body-length-tracker">(0/6,000)</span></legend>
-                        <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" onkeyup="trackBodyLenght();" placeholder="See syntax cheatsheet below"></textarea>
+                        <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" placeholder="See syntax cheatsheet below"></textarea>
                         <label for="body-titles-font-size-select">Titles size:
-                            <select id="body-titles-font-size-select"></select>
+                            <select id="body-titles-font-size-select" name="body-titles-font-size"></select>
                         </label>
                         <label for="body-subtitles-font-size-select">Subtitles size:
-                            <select id="body-subtitles-font-size-select"></select>
+                            <select id="body-subtitles-font-size-select" name="body-subtitles-font-size"></select>
                         </label>
                         <label for="body-text-font-size-select">Text size:
-                            <select id="body-text-font-size-select"></select>
+                            <select id="body-text-font-size-select" name="body-text-font-size"></select>
                         </label>
                     </fieldset>
                     
                     <fieldset>
                         <legend>Images <span id="image-number-tracker">(0/4)</span></legend>
                         <p>
-                            Upload an image and insert its tag anywhere in the text:<br>
+                            Upload an image and use this tag to insert it in your article:<br>
                             <code>![Image caption](image-name.png)</code><br>
                             Image must not be larger than 2MB.
                         </p>
-                        <ul id="attached-images-list"></ul>
-                        <button type="button" id="add-image-button" onclick="document.getElementById('image-input').click();">Select images</button>
-                        <input type="file" id="image-input" style="display: none;" multiple accept="image/png,image/jpg,image/jpeg" onchange="updateImageList();"/>
+                        <div class="grid-8" id="image-list">
+                        </div>
+                        <button type="button" id="add-image-button">Add image</button>
+                        <input type="file" id="event-image-input" style="display: none;" accept="image/png,image/jpg,image/jpeg"/>
                     </fieldset>
 
                     <fieldset>
@@ -94,8 +95,8 @@
                         </label>
                     </fieldset>
 
-                    <button type="button" id="print-button" onclick="generatePDF();">Send to print</button>
-                    <button type="button" id="save-button" onclick="saveForm();">Save*</button>
+                    <button type="button" id="print-button">Send to print</button>
+                    <button type="button" id="save-button">Save*</button>
                     <p style="grid-column: span 2; text-align: right; margin-top: -0.5rem;">
                         <small>
                             *Writes inputs to your cache and fills them in on the next page load.
@@ -120,7 +121,7 @@ Italics with *asterisks* or _underscores_.
 Bold with **asterisks** or __underscores__.
 
 Insert images in your text like this:
-![Image caption](image-file-name.png)
+![Image caption](image-name.png)
 
 | A | simple          | table                    |
 | - | --------------- | ------------------------ |

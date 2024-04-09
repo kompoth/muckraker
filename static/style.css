@@ -67,7 +67,8 @@ form input[type=file] {
 form .grid-8 {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    grid-gap: 0 0.5rem;
+    grid-gap: 0.5rem 0.5rem;
+    align-items: center;
 }
 form .col-8 {
     grid-column: span 8 !important;
@@ -85,4 +86,11 @@ form .col-2 {
 /* Do not separate labels and selects */
 fieldset label:has(select) {
     white-space: nowrap;
+}
+
+/* Inline button for custom grids */
+button.inline-button {
+    display: inline-block;
+    padding: 2px;
+    margin-top: 0;
 }

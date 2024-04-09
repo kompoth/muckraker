@@ -1,10 +1,13 @@
+var imageStorage = new Map();
+
+
 /* == On-page routines == */
 
 function formatThousands(val) {
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function trackBodyLenght () {
+function updateBodyCounter() {
     const textarea = document.getElementById("issue-body-textarea");
     const curLength = textarea.value.length; 
     const maxLength = textarea.maxLength;
@@ -12,30 +15,57 @@ function trackBodyLenght () {
     document.getElementById("body-length-tracker").innerHTML = countStr;
 }
 
-function updateImageList() {
-    var imageInput = document.getElementById("image-input");
-    var BreakException = {};
-    try {
-        Array.from(imageInput.files).forEach((file) => {
-            if (file && file.size > 2 * 1024 * 1024) throw BreakException;
-        });
-    } catch(exc) {
-        if (exc != BreakException) throw exc;
-        imageInput.value = null;
-        alert("Image is too chunky!");
-    }
-    
-    const countImages = Math.min(4, imageInput.files.length);
-    const countStr = "(" + countImages.toString() + "/4)";
+function updateImageCounter() {
+    const countStr = "(" + imageStorage.size.toString() + "/4)";
     document.getElementById("image-number-tracker").innerHTML = countStr;
+    if (imageStorage.size >= 4) {
+        document.getElementById("add-image-button").disabled = true;
+    } else {
+        document.getElementById("add-image-button").disabled = false;
+    };
+}
 
-    var imageList = document.getElementById("attached-images-list");
-    imageList.innerHTML = "";
-    Array.from(imageInput.files).slice(0, countImages).forEach((file) => {
-        var li = document.createElement("li");
-        li.innerHTML = file.name;
-        imageList.appendChild(li);    
+function addImage() {
+    /* Get and validate file */
+    const file = document.getElementById("event-image-input").files[0];
+    if (file.size > 2 * 1024 * 1024) {
+        alert("Image is too chunky!");
+        throw new Error("Image is too chunky!");
+    }
+
+    /* Append image to storage */
+    if (imageStorage.has(file.name)) return;
+    imageStorage.set(file.name, file);
+
+    /* Count images and disable input */
+    updateImageCounter();
+
+    /* Prepare IDs */
+    const buttonId = "remove-image-button-" + imageStorage.size.toString();
+    const spanId = "image-span-" + imageStorage.size.toString()
+
+    /* Prepare remove button */
+    var removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.setAttribute("id", buttonId);
+    removeButton.setAttribute("class", "col-1 inline-button");
+    removeButton.setAttribute("type", "button");
+    removeButton.addEventListener("click", () => {
+        document.getElementById(spanId).remove();
+        document.getElementById(buttonId).remove();
+        imageStorage.delete(file.name);
+        updateImageCounter();
     });
+
+    /* Prepare image span */
+    var imageSpan = document.createElement("span");
+    imageSpan.textContent = file.name;
+    imageSpan.setAttribute("id", spanId);
+    imageSpan.setAttribute("class", "col-7");
+
+    /* Alter HTML */
+    document.getElementById("image-list").appendChild(removeButton);
+    document.getElementById("image-list").appendChild(imageSpan);
 }
 
 function saveForm() {
@@ -83,9 +113,25 @@ function onLoad() {
     setFontSizes("body-titles-font-size-select", 8, 18, 2);
     setFontSizes("body-subtitles-font-size-select", 8, 18, 2);
     setFontSizes("body-text-font-size-select", 8, 18, 2);
-    
+
     reloadForm();
-    trackBodyLenght();
+    updateBodyCounter();
+
+    document.getElementById("issue-body-textarea").addEventListener(
+        "keyup", updateBodyCounter
+    );
+    document.getElementById("add-image-button").addEventListener(
+        "click", () => document.getElementById("event-image-input").click()
+    );
+    document.getElementById("event-image-input").addEventListener(
+        "change", addImage
+    );
+    document.getElementById("print-button").addEventListener(
+        "click", generatePDF
+    );
+    document.getElementById("save-button").addEventListener(
+        "click", saveForm
+    );
 }
 
 
@@ -110,7 +156,7 @@ function prepareIssue() {
 
 async function generatePDF() {
     document.getElementById("print-button").disabled = true;
-    
+
     var resp;
     var respJson;
     const resourceUrl = "/api/issue/";
@@ -126,10 +172,9 @@ async function generatePDF() {
         if (resp.ok) var issueId = respJson.issue_id
         else throw new Error("Failed to send issue data");
 
-        const imageInput = document.getElementById("image-input");
-        if (imageInput.files.length > 0) {
+        if (imageStorage.size > 0) {
             var formData = new FormData();
-            Array.from(imageInput.files).slice(0, 4).forEach((file) => {
+            imageStorage.forEach((file, key, map) => {
                 formData.append("images", file, file.name);
             });
             resp = await fetch(resourceUrl + issueId, {
@@ -139,7 +184,7 @@ async function generatePDF() {
             respJson = await resp.json();
             if (!resp.ok) throw new Error("Failed to send file");
         }
-        
+
         resp = await fetch(resourceUrl + issueId, {method: "GET"});
         if (resp.ok) resp.blob().then(
             blob => window.open(URL.createObjectURL(blob))
