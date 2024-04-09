@@ -82,3 +82,7 @@ form .col-2 {
     grid-column: span 2 !important;
 }
 
+/* Do not separate labels and selects */
+fieldset label:has(select) {
+    white-space: nowrap;
+}
