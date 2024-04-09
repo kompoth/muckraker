@@ -73,18 +73,15 @@ header h1, h2 {
     text-align: center;
     margin: 4mm;
 }
-
 header h1 {
     string-set: title content();
     font-family: KJV1611;
     font-size: 38pt;
 }
-
 header h2 {
     font-size: 14pt;
 }
-
-header .issue-info {
+header .details {
     column-count: 3;
     font-weight: bold;
     padding: 0;
@@ -92,71 +89,59 @@ header .issue-info {
     border-bottom: 0.2mm solid black;
     margin: 2mm 0;
 }
-
-header .issue-info .issue-no {
+header .details .issue-no {
     text-align: left;
     margin: 1mm;
 }
-
-header .issue-info .issue-date {
+header .details .issue-date {
     text-align: center;
     margin: 1mm;
 }
-
-header .issue-info .issue-cost {
+header .details .issue-cost {
     text-align: right;
     margin: 1mm;
+}
+
+main h1, h2 {
+    text-align: center;
+    margin: 2mm;
+    page-break-after: avoid;
+}
+main h2 {
+    font-size: 14pt;
+}
+main p{
+    font-size: 10pt;
 }
 
 .columns {
     column-count: 2;
     column-rule: 0.2mm solid black;
 }
-
-.columns h1, h2 {
-    text-align: center;
-    margin: 2mm;
-    page-break-after: avoid;
-}
-
-.columns h1 {
-    font-size: 16pt;
-}
-
-.columns h2 {
-    font-size: 14pt;
-}
-
 .columns img {
     width: 80%;
     margin: 0 auto;
     display: block;
 }
-
 .columns p {
     margin: 2mm;
     text-indent: 2mm;
     line-height: 100%;
 }
-
 .columns table {
     margin: 0 auto;
     border-spacing: 0;
 }
-
 .columns table th {
     border-bottom: 0.2mm solid black;
 }
-
 .columns table td, th {
     padding-left: 2mm;
     padding-right: 2mm;
 }
-
 .columns table td:first-child, th:first-child {
     padding-left: 0;
 }
-
 .columns table td:last-child, th:last-child {
     padding-right: 0;
 }

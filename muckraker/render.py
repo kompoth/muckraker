@@ -14,10 +14,17 @@ jinja_env = Environment(loader=FileSystemLoader(STATIC / "templates"))
 TAGS = set()
 
 
+def font_size_css(selector: str, size_pt: int | None):
+    if size_pt is None:
+        return ""
+    return f"{selector} {{ font-size: {size_pt}pt !important; }}\n"
+
+
 def render_issue(
-    config: dict,
-    heading: dict,
+    page: dict,
+    header: dict,
     body: str,
+    fonts: dict,
     output: str,
     image_dir: str = ""
 ) -> None:
@@ -31,32 +38,42 @@ def render_issue(
     ])
     body = md.convert(body)
 
-    # Sanitize all str heading fields
-    for key, value in heading.items():
+    # Sanitize all str header fields
+    for key, value in header.items():
         if isinstance(value, str):
-            heading.update({key: nh3.clean(value, tags=TAGS)})
+            header.update({key: nh3.clean(value, tags=TAGS)})
 
     # Select background
-    if config.get("bg") is not None:
-        bg_path = STATIC / "bg" / (config["bg"] + ".jpg")
+    if page.get("bg") is not None:
+        bg_path = STATIC / "bg" / (page["bg"] + ".jpg")
         bg_file_str = "file://" + str(bg_path.resolve())
-        config.update({"bg": bg_file_str})
+        page.update({"bg": bg_file_str})
 
     # Render HTML
     issue_template = jinja_env.get_template("newspaper.html")
     html = issue_template.render(
-        config=config,
-        heading=heading,
+        page=page,
+        header=header,
         body=body,
         static="file://" + str(STATIC.resolve())
     )
 
-    # Render PDF
+    # Configure fonts
     font_config = FontConfiguration()
+    fonts_css = ""
+    fonts_css += font_size_css("header h1", fonts.get("header_title_pt"))
+    fonts_css += font_size_css("header h2", fonts.get("header_subtitle_pt"))
+    fonts_css += font_size_css(".details", fonts.get("header_details_pt"))
+    fonts_css += font_size_css("main h1", fonts.get("main_title_pt"))
+    fonts_css += font_size_css("main h2", fonts.get("main_subtitle_pt"))
+    fonts_css += font_size_css("main p", fonts.get("main_text_pt"))
+    fonts_css = CSS(string=fonts_css, font_config=font_config)
+
+    # Render PDF
     css = CSS(STATIC / "style.css", font_config=font_config)
     HTML(string=html).write_pdf(
         output,
-        stylesheets=[css],
+        stylesheets=[css, fonts_css],
         font_config=font_config
     )
 
@@ -65,18 +82,17 @@ if __name__ == "__main__":
     import json
     import sys
 
-    # Load issue configuration
+    # Load issue config
     with open(sys.argv[1], "r") as fd:
         config = json.load(fd)
-
-    # Load issue heading
-    with open(sys.argv[2], "r") as fd:
-        heading = json.load(fd)
+    page = config.get("page")
+    header = config.get("header")
+    fonts = config.get("fonts")
 
     # Load issue body
-    with open(sys.argv[3], "r") as fd:
+    with open(sys.argv[2], "r") as fd:
         body = fd.read()
 
     # Create PDF
-    output = sys.argv[4]
-    render_issue(config, heading, body, output, image_dir=".")
+    output = sys.argv[3]
+    render_issue(page, header, body, fonts, output, image_dir=".")

@@ -7,6 +7,7 @@ client = TestClient(app)
 
 def test_correct(issue_dict, good_image):
     resp = client.post("/issue/", json=issue_dict)
+    print(resp.json())
     assert resp.status_code == 200
     issue_id = resp.json()["issue_id"]
 
@@ -30,13 +31,13 @@ def test_thick_body(issue_dict):
 
 def test_thick_heading_field(issue_dict):
     # Won't create tempdir
-    any_field = list(issue_dict["heading"].keys())[0]
-    issue_dict["heading"][any_field] = "a" * 51
+    any_field = list(issue_dict["header"].keys())[0]
+    issue_dict["header"][any_field] = "a" * 51
     resp = client.post("/issue/", json=issue_dict)
     assert resp.status_code == 422
     detail = resp.json()["detail"][0]
     assert detail["type"] == "string_too_long"
-    assert detail["loc"] == ["body", "heading", any_field]
+    assert detail["loc"] == ["body", "header", any_field]
 
 
 def test_thick_image(issue_dict, thick_image):

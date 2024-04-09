@@ -6,19 +6,19 @@
         <style>
             @media print { 
                 @page {
-                    {% if config.bg is not none %}
-                        background-image: url("{{ config.bg }}");
+                    {% if page.bg is not none %}
+                        background-image: url("{{ page.bg }}");
                         background-position: center;
                         background-size: cover;
                         background-attachment: fixed;
                     {% endif %}
-                    {% if config.size == "a4" %}
+                    {% if page.size == "a4" %}
                         width: 210mm;
                         height: 297mm;
-                    {% elif config.size == "a5" %}
+                    {% elif page.size == "a5" %}
                         width: 148mm;
                         height: 210mm;
-                    {% elif config.size == "demitab" %}
+                    {% elif page.size == "demitab" %}
                         width: 200mm;
                         height: 270mm;
                     {% endif %}
@@ -29,22 +29,22 @@
     
     <body class="paper-size">
         <header>
-            <h1>{{ heading.title }}</h1>
-            {%if heading.subtitle is not none %}
+            <h1>{{ header.title }}</h1>
+            {%if header.subtitle is not none %}
                 <h2>
-                    {{ heading.subtitle }}
+                    {{ header.subtitle }}
                 </h2>
             {% endif %}
-            <div class="issue-info">
-                <p class="issue-no">{{ heading.no }}</p>
-                <p class="issue-date">{{ heading.date }}</p>
-                <p class="issue-cost">{{ heading.cost }}</p>
+            <div class="details">
+                <p class="issue-no">{{ header.no }}</p>
+                <p class="issue-date">{{ header.date }}</p>
+                <p class="issue-cost">{{ header.cost }}</p>
             </div>
         </header>
-
-        <div class="columns">
+        
+        <main class="columns">
             {{ body }}
-        </div>
+        </main>
     </body>
 </html>
 

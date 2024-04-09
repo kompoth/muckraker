@@ -91,7 +91,7 @@ function reloadForm() {
     });
 }
 
-function setFontSizes(elementId, min, max, step) {
+function setFontSizes(elementId, min, max, step, defVal) {
     var element = document.getElementById(elementId);
     const sizes = Array.from(
         {length: (max - min) / step + 1},
@@ -100,6 +100,7 @@ function setFontSizes(elementId, min, max, step) {
  
     sizes.forEach((size) => {
         var optionElement = document.createElement("option");
+        if (size == defVal) optionElement.setAttribute("selected", "selected");
         optionElement.setAttribute("value", size);
         optionElement.textContent = size + " pt";
         element.appendChild(optionElement);
@@ -107,12 +108,12 @@ function setFontSizes(elementId, min, max, step) {
 }
 
 function onLoad() {
-    setFontSizes("title-font-size-select", 32, 64, 2);
-    setFontSizes("subtitle-font-size-select", 12, 32, 2);
-    setFontSizes("details-font-size-select", 8, 18, 2);
-    setFontSizes("body-titles-font-size-select", 8, 18, 2);
-    setFontSizes("body-subtitles-font-size-select", 8, 18, 2);
-    setFontSizes("body-text-font-size-select", 8, 18, 2);
+    setFontSizes("header-title-pt-select", 32, 64, 2, 48);
+    setFontSizes("header-subtitle-pt-select", 8, 32, 2, 16);
+    setFontSizes("header-details-pt-select", 8, 32, 2, 10);
+    setFontSizes("main-title-pt-select", 8, 32, 2, 18);
+    setFontSizes("main-subtitle-pt-select", 8, 32, 2, 14);
+    setFontSizes("main-text-pt-select", 8, 32, 2, 10);
 
     reloadForm();
     updateBodyCounter();
@@ -138,19 +139,32 @@ function onLoad() {
 /* == API interaction == */
 
 function prepareIssue() {
+    page = {
+        size: document.getElementById("size-select").value,
+        bg: document.getElementById("bg-select").value
+    };
+    header = {
+        title: document.getElementById("title-input").value,
+        subtitle: document.getElementById("subtitle-input").value,
+        no: document.getElementById("issue-no-input").value,
+        date: document.getElementById("issue-date-input").value,
+        cost: document.getElementById("issue-cost-input").value
+    };
+    body = document.getElementById("issue-body-textarea").value;
+    fonts = {
+        header_title_pt: document.getElementById("header-title-pt-select").value,
+        header_subtitle_pt: document.getElementById("header-subtitle-pt-select").value,
+        header_details_pt: document.getElementById("header-details-pt-select").value,
+        main_title_pt: document.getElementById("main-title-pt-select").value,
+        main_subtitle_pt: document.getElementById("main-subtitle-pt-select").value,
+        main_text_pt: document.getElementById("main-text-pt-select").value
+    } 
+
     return JSON.stringify({
-        config: {
-            size: document.getElementById("size-select").value,
-            bg: document.getElementById("bg-select").value
-        },
-        heading: {
-            title: document.getElementById("title-input").value,
-            subtitle: document.getElementById("subtitle-input").value,
-            no: document.getElementById("issue-no-input").value,
-            date: document.getElementById("issue-date-input").value,
-            cost: document.getElementById("issue-cost-input").value
-        },
-        body: document.getElementById("issue-body-textarea").value
+        page: page,
+        header: header,
+        body: body, 
+        fonts: fonts
     });
 }
 

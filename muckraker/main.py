@@ -106,9 +106,10 @@ async def get_s_issue(dir_path: Path = Depends(get_dir_path)):
     # Render PDF and write it to buffer
     pdf_path = dir_path / "out.pdf"
     render_issue(
-        config=issue_dict["config"],
-        heading=issue_dict["heading"],
+        page=issue_dict["page"],
+        header=issue_dict["header"],
         body=issue_dict["body"],
+        fonts=issue_dict["fonts"],
         output=pdf_path,
         image_dir=dir_path
     )
