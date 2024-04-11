@@ -99,3 +99,14 @@ button.inline-button {
 #image-list span {
     overflow-wrap: break-word;
 }
+
+/* Loading animation */
+@keyframes spin {
+    from {transform: rotateZ(0deg);}
+    to {transform: rotateZ(360deg);}
+}
+.loader {
+    display: none;
+    animation: spin 5s linear infinite;
+    font-size: 2rem;
+}

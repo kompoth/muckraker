@@ -168,13 +168,31 @@ function prepareIssue() {
     });
 }
 
+function startLoader() {
+    var button = document.getElementById("print-button");
+    var loaders = button.getElementsByClassName("loader");
+    for (let loader of loaders) {
+        loader.style.display = "inline-block";
+    }
+    button.disabled = true;
+}
+
+function stopLoader() {
+    var button = document.getElementById("print-button");
+    var loaders = button.getElementsByClassName("loader");
+    for (let loader of loaders) {
+        loader.style.display = "none";
+    }
+    button.disabled = false;
+}
+
 async function generatePDF() {
-    document.getElementById("print-button").disabled = true;
+    startLoader();
 
     var resp;
     var respJson;
-    const resourceUrl = "/api/issue/";
-    //const resourceUrl = "http://127.0.0.1:8001/issue/";
+    //const resourceUrl = "/api/issue/";
+    const resourceUrl = "http://127.0.0.1:8001/issue/";
 
     try {
         resp = await fetch(resourceUrl, {
@@ -208,5 +226,5 @@ async function generatePDF() {
         console.error("Failed to generate PDF");
     } 
 
-    document.getElementById("print-button").disabled = false;
+    stopLoader();
 }
