@@ -88,6 +88,12 @@ fieldset label:has(select) {
     white-space: nowrap;
 }
 
+/* Select options colors */
+select option {
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
 /* Inline button for custom grids */
 button.inline-button {
     display: inline-block;
