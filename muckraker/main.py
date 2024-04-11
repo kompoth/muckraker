@@ -12,6 +12,7 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from . import __version__
 from .models import Issue
 from .render import render_issue
 
@@ -21,7 +22,17 @@ IMAGE_BATCH = 1024
 ACCEPTED_FILE_TYPES = ("image/png", "image/jpeg", "image/jpg")
 IMAGE_SUFFIXES = (".png", ".jpeg", ".jpg")
 
-app = FastAPI(root_path="/api")
+# Setup the application
+tags_metadata = [{"name": "issue"}]
+app = FastAPI(
+    title="Muckraker",
+    root_path="/api",
+    version=__version__,
+    summary="A vintage gazette generator for your creative projects.",
+    openapi_tags=tags_metadata
+)
+
+# Configure CORS policy
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -48,8 +59,8 @@ async def clear_tempdir_handler(request, exc):
     )
 
 
-@app.post("/issue/")
-async def create_s_issue(issue: Issue):
+@app.post("/issue/", tags=["issue"])
+async def upload_issue_data(issue: Issue):
     dir_path = mkdtemp(prefix="muckraker")
     issue_path = Path(dir_path) / "issue.json"
     with open(issue_path, "w") as fd:
@@ -57,8 +68,8 @@ async def create_s_issue(issue: Issue):
     return {"issue_id": dir_path.split("muckraker")[-1]}
 
 
-@app.patch("/issue/{issue_id}")
-async def patch_s_issue(
+@app.patch("/issue/{issue_id}", tags=["issue"])
+async def upload_images(
     dir_path: Path = Depends(get_dir_path),
     images: List[UploadFile] = File()
 ):
@@ -97,8 +108,8 @@ async def patch_s_issue(
     return JSONResponse(content={"filename": image.filename})
 
 
-@app.get("/issue/{issue_id}")
-async def get_s_issue(dir_path: Path = Depends(get_dir_path)):
+@app.get("/issue/{issue_id}", tags=["issue"])
+async def get_issue(dir_path: Path = Depends(get_dir_path)):
     # Read issue data
     with open(dir_path / "issue.json", "r") as fd:
         issue_dict = json.load(fd)
