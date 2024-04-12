@@ -40,7 +40,7 @@ app.add_middleware(
 )
 
 
-async def get_dir_path(issue_id: str):
+def get_dir_path(issue_id: str):
     dir_path = Path(gettempdir()) / f"muckraker{issue_id}"
     if not (dir_path.exists() and dir_path.is_dir()):
         raise HTTPException(status_code=404, detail="No data")
@@ -48,10 +48,10 @@ async def get_dir_path(issue_id: str):
 
 
 @app.exception_handler(RequestValidationError)
-async def clear_tempdir_handler(request, exc):
+def clear_tempdir_handler(request, exc):
     issue_id = request.path_params.get("issue_id")
     if issue_id:
-        rmtree(await get_dir_path(issue_id))
+        rmtree(get_dir_path(issue_id))
     return JSONResponse(
         status_code=422,
         content=jsonable_encoder({"detail": exc.errors()}),
