@@ -5,7 +5,6 @@ from shutil import rmtree
 from tempfile import gettempdir, mkdtemp
 from typing import List
 
-import aiofiles
 from fastapi import Depends, FastAPI, File, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException, RequestValidationError
@@ -60,7 +59,7 @@ async def clear_tempdir_handler(request, exc):
 
 
 @app.post("/issue/", tags=["issue"])
-async def upload_issue_data(issue: Issue):
+def upload_issue_data(issue: Issue):
     dir_path = mkdtemp(prefix="muckraker")
     issue_path = Path(dir_path) / "issue.json"
     with open(issue_path, "w") as fd:
@@ -69,7 +68,7 @@ async def upload_issue_data(issue: Issue):
 
 
 @app.patch("/issue/{issue_id}", tags=["issue"])
-async def upload_images(
+def upload_images(
     dir_path: Path = Depends(get_dir_path),
     images: List[UploadFile] = File()
 ):
@@ -102,14 +101,13 @@ async def upload_images(
     # Save images to the disk
     for image in images:
         image_path = dir_path / image.filename
-        async with aiofiles.open(image_path, "wb") as fd:
-            while content := await image.read(IMAGE_BATCH):
-                await fd.write(content)
+        with open(image_path, "wb") as fd:
+            fd.write(image.file.read())
     return JSONResponse(content={"filename": image.filename})
 
 
 @app.get("/issue/{issue_id}", tags=["issue"])
-async def get_issue(dir_path: Path = Depends(get_dir_path)):
+def get_issue(dir_path: Path = Depends(get_dir_path)):
     # Read issue data
     with open(dir_path / "issue.json", "r") as fd:
         issue_dict = json.load(fd)
