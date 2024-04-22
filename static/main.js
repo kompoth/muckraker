@@ -28,6 +28,7 @@ function updateImageCounter() {
 function addImage() {
     /* Get and validate file */
     const file = document.getElementById("event-image-input").files[0];
+    document.getElementById("event-image-input").value = null;
     if (file.size > 2 * 1024 * 1024) {
         alert("Image is too chunky!");
         throw new Error("Image is too chunky!");
