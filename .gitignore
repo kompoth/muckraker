@@ -13,4 +13,5 @@ build/
 *.egg
 
 # Heavy
+*.sqlite
 *.pdf

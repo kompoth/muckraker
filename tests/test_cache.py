@@ -6,7 +6,6 @@ from muckraker.sqlcache import SQLCache
 def test_cache(issue_dict, good_image, thick_image):
     # Prepare cache
     cache = SQLCache("test.db")
-    asyncio.run(cache.setup())
     asyncio.run(cache.delete_issue("123"))
 
     # Insert and select issue data
