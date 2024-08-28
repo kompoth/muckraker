@@ -20,22 +20,17 @@ def font_size_css(selector: str, size_pt: int | None):
     return f"{selector} {{ font-size: {size_pt}pt !important; }}\n"
 
 
-def render_issue(
-    page: dict,
-    header: dict,
-    body: str,
-    fonts: dict,
-    output: str,
-    image_dir: str = ""
-) -> None:
+def render_issue(page: dict, header: dict, body: str, fonts: dict, output: str, image_dir: str = "") -> None:
     # Sanitize Markdown and convert it to HTML
     body = nh3.clean(body, tags=TAGS)
-    md = Markdown(extensions=[
-        "tables",
-        "sane_lists",
-        FilterExtension(),
-        ImagePathExtension(image_dir=image_dir)
-    ])
+    md = Markdown(
+        extensions=[
+            "tables",
+            "sane_lists",
+            FilterExtension(),
+            ImagePathExtension(image_dir=image_dir),
+        ]
+    )
     body = md.convert(body)
 
     # Sanitize all str header fields
@@ -55,7 +50,7 @@ def render_issue(
         page=page,
         header=header,
         body=body,
-        static="file://" + str(STATIC.resolve())
+        static="file://" + str(STATIC.resolve()),
     )
 
     # Configure fonts
@@ -74,7 +69,7 @@ def render_issue(
     HTML(string=html).write_pdf(
         output,
         stylesheets=[css, fonts_css],
-        font_config=font_config
+        font_config=font_config,
     )
 
 

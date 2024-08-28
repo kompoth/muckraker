@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "muckraker"
+version = "0.1.0"
+description = "A vintage gazette generator"
+authors = ["Vasily Negrebetskiy"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "0.110.0"
+jinja2 = "3.1.3"
+markdown = "3.6"
+pydantic = "2.6.4"
+python-multipart = "0.0.9"
+weasyprint = "61.2"
+pydyf = "^0.9.0"
+uvicorn = "0.29.0"
+httpx = "0.26.0"
+aiosqlite = "^0.20.0"
+nh3 = "^0.2.18"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = ["E501"]

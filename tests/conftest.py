@@ -9,19 +9,16 @@ LOREM = (
     "nisi ut aliquip ex ea commodo consequat."
 )
 __ISSUE_DICT = {
-    "page": {
-        "size": "demitab",
-        "bg": None
-    },
+    "page": {"size": "demitab", "bg": None},
     "header": {
         "title": "Muckraker",
         "subtitle": "A vintage gazette generator for creative projects",
         "no": "№ 22",
         "date": "April 1, 2024",
         "cost": "Price 1 c.p.",
-        "title_font": 10
+        "title_font": 10,
     },
-    "body": LOREM
+    "body": LOREM,
 }
 
 

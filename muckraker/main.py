@@ -1,5 +1,5 @@
-from asyncio import gather
 import uuid
+from asyncio import gather
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -13,7 +13,7 @@ from fastapi.responses import JSONResponse
 from . import __version__
 from .models import Issue
 from .render import render_issue
-from .sqlcache import SQLCache, CacheError
+from .sqlcache import CacheError, SQLCache
 
 CACHE_PATH = "cache.sqlite"
 MAX_IMAGE_NUM = 4
@@ -106,7 +106,7 @@ async def get_issue(issue_id: str):
             body=issue_dict["body"],
             fonts=issue_dict["fonts"],
             output=pdf_path,
-            image_dir=dir_path
+            image_dir=dir_path,
         )
         with open(pdf_path, "rb") as fd:
             buf = BytesIO(fd.read())
@@ -118,5 +118,5 @@ async def get_issue(issue_id: str):
     # Delete cached data
     await cache.delete_issue(issue_id)
 
-    headers = {'Content-Disposition': 'attachment; filename="out.pdf"'}
-    return Response(pdf_bytes, headers=headers, media_type='application/pdf')
+    headers = {"Content-Disposition": 'attachment; filename="out.pdf"'}
+    return Response(pdf_bytes, headers=headers, media_type="application/pdf")

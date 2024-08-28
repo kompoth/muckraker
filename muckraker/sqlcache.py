@@ -31,7 +31,7 @@ class SQLCache:
             """)
 
     async def put_issue(self, issue_id: str, issue_dict: dict) -> None:
-        data = json.dumps(issue_dict).encode('utf-8')
+        data = json.dumps(issue_dict).encode("utf-8")
         async with aiosqlite.connect(self.path) as db:
             await db.execute("INSERT INTO issues (issue_id, data) VALUES (?, ?)", (issue_id, data))
             await db.commit()
