@@ -8,6 +8,7 @@ RUN pip install poetry==1.8.3
 RUN poetry export --without-hashes --only=main --format=requirements.txt > requirements.txt
 
 
+
 FROM python:3.12-slim AS runner
 
 WORKDIR /app

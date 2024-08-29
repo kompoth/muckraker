@@ -39,7 +39,8 @@ class SQLCache:
     async def put_image(self, issue_id: str, name: str, image: bytes) -> None:
         async with aiosqlite.connect(self.path) as db:
             try:
-                await db.execute("INSERT INTO images (issue_id, name, image) VALUES (?, ?, ?)", (issue_id, name, image))
+                query = "INSERT INTO images (issue_id, name, image) VALUES (?, ?, ?)"
+                await db.execute(query, (issue_id, name, image))
                 await db.commit()
             except aiosqlite.IntegrityError:
                 raise CacheError(f"Image name duplicates: {name}")
@@ -52,7 +53,8 @@ class SQLCache:
 
     async def get_issue(self, issue_id: str) -> dict:
         async with aiosqlite.connect(self.path) as db:
-            async with db.execute("SELECT data FROM issues WHERE issue_id = ?", (issue_id,)) as cursor:
+            query = "SELECT data FROM issues WHERE issue_id = ?"
+            async with db.execute(query, (issue_id,)) as cursor:
                 row = await cursor.fetchone()
                 if row:
                     return json.loads(row[0])
@@ -61,13 +63,15 @@ class SQLCache:
 
     async def count_images(self, issue_id: str) -> None:
         async with aiosqlite.connect(self.path) as db:
-            async with db.execute("SELECT COUNT(*) FROM images WHERE issue_id = ?", (issue_id,)) as cursor:
+            query = "SELECT COUNT(*) FROM images WHERE issue_id = ?"
+            async with db.execute(query, (issue_id,)) as cursor:
                 row = await cursor.fetchone()
                 return row[0]
 
     async def load_images(self, issue_id: str) -> None:
         async with aiosqlite.connect(self.path) as db:
-            async with db.execute("SELECT name, image FROM images WHERE issue_id = ?", (issue_id,)) as cursor:
+            query = "SELECT name, image FROM images WHERE issue_id = ?"
+            async with db.execute(query, (issue_id,)) as cursor:
                 async for row in cursor:
                     name = row[0]
                     image = row[1]

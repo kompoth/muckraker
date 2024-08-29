@@ -32,7 +32,9 @@ class ImagePathProcessor(ImageInlineProcessor):
         super().__init__(pattern, md)
         self.image_dir = image_dir
 
-    def handleMatch(self, m: re.Match[str], data: str) -> tuple[etree.Element | None, int | None, int | None]:
+    def handleMatch(
+        self, m: re.Match[str], data: str
+    ) -> tuple[etree.Element | None, int | None, int | None]:
         el, start, ind = super().handleMatch(m, data)
         src_path = Path(el.get("src"))
         src_path = Path(self.image_dir) / src_path

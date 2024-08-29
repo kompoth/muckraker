@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from muckraker.sqlcache import SQLCache
 
@@ -18,3 +19,5 @@ def test_cache(issue_dict, good_image, thick_image):
     # Insert some images
     asyncio.run(cache.put_image("123", "test1.png", good_image.read()))
     asyncio.run(cache.put_image("123", "test2.png", thick_image.read()))
+
+    os.remove("test.db")
