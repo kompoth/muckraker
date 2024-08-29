@@ -7,7 +7,6 @@ client = TestClient(app)
 
 def test_correct(issue_dict, good_image):
     resp = client.post("/issue/", json=issue_dict)
-    print(resp.json())
     assert resp.status_code == 200
     issue_id = resp.json()["issue_id"]
 

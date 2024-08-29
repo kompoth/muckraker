@@ -42,7 +42,7 @@ class Issue(BaseModel):
     body: str = Field(max_length=MAX_BODY_LEN)
     fonts: Optional[IssueFonts] = IssueFonts()
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def validate_to_json(cls, value):
         if isinstance(value, str):

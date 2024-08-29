@@ -1,20 +1,21 @@
-import json
+import uuid
+from asyncio import gather
 from io import BytesIO
 from pathlib import Path
-from shutil import rmtree
-from tempfile import gettempdir, mkdtemp
+from tempfile import TemporaryDirectory
 from typing import List
 
-from fastapi import Depends, FastAPI, File, Response, UploadFile
-from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi import FastAPI, File, Response, UploadFile, status
+from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from . import __version__
 from .models import Issue
 from .render import render_issue
+from .sqlcache import CacheError, SQLCache
 
+CACHE_PATH = "cache.sqlite"
 MAX_IMAGE_NUM = 4
 MAX_IMAGE_SIZE = 2 * 1024 * 1024  # 2 MB
 IMAGE_BATCH = 1024
@@ -28,7 +29,7 @@ app = FastAPI(
     root_path="/api",
     version=__version__,
     summary="A vintage gazette generator for your creative projects.",
-    openapi_tags=tags_metadata
+    openapi_tags=tags_metadata,
 )
 
 # Configure CORS policy
@@ -36,101 +37,86 @@ origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=["POST", "PATCH", "GET"]
+    allow_methods=["POST", "PATCH", "GET"],
 )
 
-
-def get_dir_path(issue_id: str):
-    dir_path = Path(gettempdir()) / f"muckraker{issue_id}"
-    if not (dir_path.exists() and dir_path.is_dir()):
-        raise HTTPException(status_code=404, detail="No data")
-    return dir_path
-
-
-@app.exception_handler(RequestValidationError)
-def clear_tempdir_handler(request, exc):
-    issue_id = request.path_params.get("issue_id")
-    if issue_id:
-        rmtree(get_dir_path(issue_id))
-    return JSONResponse(
-        status_code=422,
-        content=jsonable_encoder({"detail": exc.errors()}),
-    )
+cache = SQLCache(CACHE_PATH)
 
 
 @app.post("/issue/", tags=["issue"])
-def upload_issue_data(issue: Issue):
-    dir_path = mkdtemp(prefix="muckraker")
-    issue_path = Path(dir_path) / "issue.json"
-    with open(issue_path, "w") as fd:
-        fd.write(issue.model_dump_json())
-    return {"issue_id": dir_path.split("muckraker")[-1]}
+async def upload_issue_data(issue: Issue) -> dict:
+    issue_id = uuid.uuid4().hex
+    await cache.put_issue(issue_id, issue.model_dump())
+    return {"issue_id": issue_id}
 
 
 @app.patch("/issue/{issue_id}", tags=["issue"])
-def upload_images(
-    dir_path: Path = Depends(get_dir_path),
-    images: List[UploadFile] = File()
+async def upload_images(
+    issue_id: str,
+    images: List[UploadFile] = File(),
 ):
-    # Check if there are already images
-    uploaded_files = dir_path.glob('**/*')
-    uploaded_images = [
-        x for x in uploaded_files
-        if x.is_file() and x.suffix in IMAGE_SUFFIXES
-    ]
-    if len(uploaded_images) > 0:
-        rmtree(dir_path)
-        raise HTTPException(429, detail="To many uploads")
+    issue = await cache.get_issue(issue_id)
+    if issue is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Issue not found")
 
     # Validate number of images
-    if len(images) > MAX_IMAGE_NUM:
-        rmtree(dir_path)
-        raise HTTPException(413, detail="To many images")
+    image_num = await cache.count_images(issue_id)
+    if image_num + len(images) > MAX_IMAGE_NUM:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Too many images")
 
     # Validate images
     for image in images:
         if image.content_type not in ACCEPTED_FILE_TYPES:
             detail = f"Invalid file type: {image.filename}"
-            rmtree(dir_path)
-            raise HTTPException(415, detail=detail)
+            raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=detail)
         if image.size > MAX_IMAGE_SIZE:
             detail = f"File is too large: {image.filename}"
-            rmtree(dir_path)
-            raise HTTPException(413, detail=detail)
+            raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail=detail)
 
-    # Save images to the disk
-    for image in images:
-        image_path = dir_path / image.filename
-        with open(image_path, "wb") as fd:
-            fd.write(image.file.read())
+    # Save images
+    tasks = [cache.put_image(issue_id, image.filename, image.file.read()) for image in images]
+    try:
+        await gather(*tasks)
+    except CacheError as err:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=str(err))
     return JSONResponse(content={"filename": image.filename})
 
 
 @app.get("/issue/{issue_id}", tags=["issue"])
-def get_issue(dir_path: Path = Depends(get_dir_path)):
+async def get_issue(issue_id: str):
     # Read issue data
-    with open(dir_path / "issue.json", "r") as fd:
-        issue_dict = json.load(fd)
+    issue_dict = await cache.get_issue(issue_id)
+    if issue_dict is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Issue not found")
 
-    # Render PDF and write it to buffer
-    pdf_path = dir_path / "out.pdf"
-    render_issue(
-        page=issue_dict["page"],
-        header=issue_dict["header"],
-        body=issue_dict["body"],
-        fonts=issue_dict["fonts"],
-        output=pdf_path,
-        image_dir=dir_path
-    )
-    with open(pdf_path, "rb") as fd:
-        buf = BytesIO(fd.read())
+    with TemporaryDirectory() as tmp_dir_name:
+        dir_path = Path(tmp_dir_name)
 
-    # Delete tempdir
-    rmtree(dir_path)
+        # Extract images
+        async for filename, image in cache.load_images(issue_id):
+            image_path = dir_path / filename
+            with open(image_path, "wb") as fd:
+                fd.write(image)
+
+        # Render PDF and write it to buffer
+        pdf_path = dir_path / "out.pdf"
+        render_issue(
+            page=issue_dict["page"],
+            header=issue_dict["header"],
+            body=issue_dict["body"],
+            fonts=issue_dict["fonts"],
+            output=pdf_path,
+            image_dir=dir_path,
+        )
+        with open(pdf_path, "rb") as fd:
+            buf = BytesIO(fd.read())
 
     # Get pdf from buffer
     pdf_bytes = buf.getvalue()
     buf.close()
 
-    headers = {'Content-Disposition': 'attachment; filename="out.pdf"'}
-    return Response(pdf_bytes, headers=headers, media_type='application/pdf')
+    # Delete cached data
+    await cache.delete_issue(issue_id)
+
+    headers = {"Content-Disposition": 'attachment; filename="out.pdf"'}
+    return Response(pdf_bytes, headers=headers, media_type="application/pdf")

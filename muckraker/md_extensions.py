@@ -8,7 +8,7 @@ from markdown.inlinepatterns import IMAGE_LINK_RE, ImageInlineProcessor
 
 
 class FilterExtension(Extension):
-    """ Ignore some tags """
+    """Ignore some tags"""
 
     def extendMarkdown(self, md: Markdown) -> None:
         md.inlinePatterns.deregister("link")
@@ -26,16 +26,14 @@ class FilterExtension(Extension):
 
 
 class ImagePathProcessor(ImageInlineProcessor):
-    """ Return an `img` element from the given match. """
+    """Return an `img` element from the given match."""
 
-    def __init__(self, pattern: str, md: Markdown, image_dir: str = ""):
+    def __init__(self, pattern: str, md: Markdown, image_dir: str = "") -> None:
         super().__init__(pattern, md)
         self.image_dir = image_dir
 
     def handleMatch(
-        self,
-        m: re.Match[str],
-        data: str
+        self, m: re.Match[str], data: str
     ) -> tuple[etree.Element | None, int | None, int | None]:
         el, start, ind = super().handleMatch(m, data)
         src_path = Path(el.get("src"))
@@ -45,9 +43,9 @@ class ImagePathProcessor(ImageInlineProcessor):
 
 
 class ImagePathExtension(Extension):
-    """ Modify image paths so that Weasyprint could handle them """
+    """Modify image paths so that Weasyprint could handle them"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self.config = {"image_dir": ["", "Images root directory"]}
         super().__init__(**kwargs)
 
@@ -56,9 +54,5 @@ class ImagePathExtension(Extension):
         md.inlinePatterns.deregister("image_reference")
         md.inlinePatterns.deregister("short_image_ref")
 
-        processor = ImagePathProcessor(
-            IMAGE_LINK_RE,
-            md,
-            self.getConfig("image_dir")
-        )
+        processor = ImagePathProcessor(IMAGE_LINK_RE, md, self.getConfig("image_dir"))
         md.inlinePatterns.register(processor, "image_path", 140)
