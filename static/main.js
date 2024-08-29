@@ -187,6 +187,14 @@ function stopLoader() {
     button.disabled = false;
 }
 
+function downloadURI(uri, name) {
+    var link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    link.click();
+    link.remove();
+}
+
 async function generatePDF() {
     startLoader();
 
@@ -219,7 +227,7 @@ async function generatePDF() {
 
         resp = await fetch(resourceUrl + issueId, {method: "GET"});
         if (resp.ok) resp.blob().then(
-            blob => window.open(URL.createObjectURL(blob))
+            blob => downloadURI(URL.createObjectURL(blob), "issue.pdf")
         );
         else throw new Error("Failed to recieve PDF");
     } catch {
