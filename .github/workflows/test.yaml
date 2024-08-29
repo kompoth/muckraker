@@ -1,7 +1,5 @@
-name: Development
+name: Test
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -15,12 +13,14 @@ jobs:
     - name: Set up Python 
       uses: actions/setup-python@v4
       with:  
-        python-version: "3.11" 
+        python-version: "3.12" 
     - name: Check with linter 
-      run: pip install flake8 && flake8
+      run: |
+        pip install ruff==0.5.2
+        ruff check
 
   test:
-    name: Run tests 
+    name: Run smoke tests 
     needs: lint
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +29,7 @@ jobs:
     - name: Set up Python 
       uses: actions/setup-python@v4
       with:  
-        python-version: "3.11" 
+        python-version: "3.12" 
     - name: Install dependencies
       run: pip install -r requirements.txt
     - name: Run tests 
