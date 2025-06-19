@@ -5,6 +5,7 @@ description = "A vintage gazette generator"
 authors = ["Vasily Negrebetskiy"]
 license = "MIT"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
