@@ -3,8 +3,7 @@
 ## Version bumping
 
 Currently project version is tracked in two locations: `pyproject.toml` and `muckraker/__init__.py`.
-Those two MUST be synchronised. To do that automatically, use Poetry with
-[this plugin](https://pypi.org/project/poetry-bumpversion/).
+Those two MUST be synchronised.
 
 ## Linting
 
