@@ -39,29 +39,44 @@
                 <form id="generator-form">
                     <fieldset class="grid-8">
                         <legend class="col-8">Heading</legend>
+
                         <label  class="col-8" for="title-input">Title:</label>
-                        <input  class="col-7" type="text" maxlength="50" id="title-input" name="title">
+                        <input  class="col-5" type="text" maxlength="50" id="title-input" name="title">
+                        <select class="col-2" disabled>
+                            <option>KJV1611</option>
+                        </select>
                         <select class="col-1" id="header-title-pt-select" name="header-title-pt"></select>
+                        
                         <label  class="col-8" for="subtitle-input">Subtitle:</label>
-                        <input  class="col-7" type="text" maxlength="50" id="subtitle-input" name="subtitle">
+                        <input  class="col-5" type="text" maxlength="50" id="subtitle-input" name="subtitle">
+                        <select class="col-2" disabled>
+                            <option>TT2020</option>
+                        </select>
                         <select class="col-1" id="header-subtitle-pt-select" name="header-subtitle-pt"></select>
+                        
                         <label  class="col-8">Details:</label>
-                        <input  class="col-2" type="text" maxlength="50" id="issue-no-input" name="issue-no" placeholder="№ 22">
-                        <input  class="col-3" type="text" maxlength="50" id="issue-date-input" name="issue-date" placeholder="April 1, 2024">
+                        <input  class="col-1" type="text" maxlength="50" id="issue-no-input" name="issue-no" placeholder="№ 22">
+                        <input  class="col-2" type="text" maxlength="50" id="issue-date-input" name="issue-date" placeholder="April 1, 2024">
                         <input  class="col-2" type="text" maxlength="50" id="issue-cost-input" name="issue-cost" placeholder="Price $1">
+                        <select class="col-2" disabled>
+                            <option>TT2020</option>
+                        </select>
                         <select class="col-1" id="header-details-pt-select" name="header-details-pt"></select>
                     </fieldset>
                     
                     <fieldset>
                         <legend>Issue body <span id="body-length-tracker">(0/6,000)</span></legend>
                         <textarea id="issue-body-textarea" name="issue-body" rows=10 maxlength="6000" placeholder="See syntax cheatsheet below"></textarea>
-                        <label for="main-title-pt-select">Titles size:
+                        <label for="main-font-pt-select">Font:
+                            <select disabled><option>TT2020</option></select>
+                        </label>
+                        <label for="main-title-pt-select">Titles:
                             <select id="main-title-pt-select" name="main-title-pt"></select>
                         </label>
-                        <label for="main-subtitle-pt-select">Subtitles size:
+                        <label for="main-subtitle-pt-select">Subtitles:
                             <select id="main-subtitle-pt-select" name="main-subtitle-pt"></select>
                         </label>
-                        <label for="main-text-pt-select">Text size:
+                        <label for="main-text-pt-select">Text:
                             <select id="main-text-pt-select" name="main-text-pt"></select>
                         </label>
                     </fieldset>

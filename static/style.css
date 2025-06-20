@@ -76,11 +76,23 @@ form .col-8 {
 form .col-7 {
     grid-column: span 7 !important;
 }
+form .col-6 {
+    grid-column: span 6 !important;
+}
+form .col-5 {
+    grid-column: span 5 !important;
+}
+form .col-4 {
+    grid-column: span 4 !important;
+}
 form .col-3 {
     grid-column: span 3 !important;
 }
 form .col-2 {
     grid-column: span 2 !important;
+}
+form .col-1 {
+    grid-column: span 1 !important;
 }
 
 /* Do not separate labels and selects */
